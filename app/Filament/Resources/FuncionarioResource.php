@@ -2,31 +2,30 @@
 
 namespace App\Filament\Resources;
 
-
+use App\Filament\Resources\FuncionarioResource\Pages;
+use App\Filament\Resources\FuncionarioResource\RelationManagers;
 use App\Models\Estado;
-use App\Filament\Resources\ClienteResource\Pages;
-use App\Filament\Resources\ClienteResource\RelationManagers;
-use App\Models\Cliente;
+use App\Models\Funcionario;
 use Filament\Forms;
-use Filament\Forms\Components\TextInput\Mask;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
+use Filament\Support\RawJs;
 use Filament\Tables;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Forms\Components\CpfCnpj;
-use Filament\Forms\Components\Grid;
-use Filament\Support\RawJs;
 
-class ClienteResource extends Resource
+class FuncionarioResource extends Resource
 {
+    protected static ?string $model = Funcionario::class;
 
-    protected static ?string $model = Cliente::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?string $navigationGroup = 'Cadastros';
+
+    protected static ?string $navigationLabel = 'Funcionários';
+
 
     public static function form(Form $form): Form
     {
@@ -44,13 +43,10 @@ class ClienteResource extends Resource
                         ])
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('cpf_cnpj')
-                            ->label('CPF/CNPJ')
-                            ->mask(RawJs::make(<<<'JS'
-                                    $input.length > 14 ? '99.999.999/9999-99' : '999.999.999-99'
-                                JS))
+                        Forms\Components\TextInput::make('cpf')
+                            ->label('CPF')
+                            ->mask('999.999.999-99')
                             ->rule('cpf_ou_cnpj'),
-                            
                         Forms\Components\TextInput::make('telefone')
                             ->minLength(11)
                             ->maxLength(11)
@@ -72,9 +68,9 @@ class ClienteResource extends Resource
                             ->reactive(),
                         Forms\Components\Select::make('cidade_id')
                             ->label('Cidade')
+                            ->required()
                             ->native(false)
                             ->searchable()
-                            ->required()
                             ->options(function (callable $get) {
                                 $estado = Estado::find($get('estado_id'));
                                 if (!$estado) {
@@ -100,28 +96,28 @@ class ClienteResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nome')
-                    ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('endereco')
-                    ->label('Endereço'),
-                Tables\Columns\TextColumn::make('estado.nome')
-                    ->label('Estado'),
-                Tables\Columns\TextColumn::make('cidade.nome')
-                    ->label('Cidade'),
-                Tables\Columns\TextColumn::make('telefone')
+                ->sortable()
+                ->searchable(),
+            Tables\Columns\TextColumn::make('endereco')
+                ->label('Endereço'),
+            Tables\Columns\TextColumn::make('estado.nome')
+                ->label('Estado'),
+            Tables\Columns\TextColumn::make('cidade.nome')
+                ->label('Cidade'),
+            Tables\Columns\TextColumn::make('telefone')
 
-                    ->formatStateUsing(fn (string $state) => vsprintf('(%d%d)%d%d%d%d%d-%d%d%d%d', str_split($state)))
-                    ->label('Telefone'),
+                ->formatStateUsing(fn (string $state) => vsprintf('(%d%d)%d%d%d%d%d-%d%d%d%d', str_split($state)))
+                ->label('Telefone'),
 
-                Tables\Columns\TextColumn::make('email')
-                    ->label('Email'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->dateTime(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])  
+            Tables\Columns\TextColumn::make('email')
+                ->label('Email'),
+            Tables\Columns\TextColumn::make('created_at')
+                ->toggleable(isToggledHiddenByDefault: true)
+                ->dateTime(),
+            Tables\Columns\TextColumn::make('updated_at')
+                ->dateTime()
+                ->toggleable(isToggledHiddenByDefault: true),
+            ])
             ->filters([
                 //
             ])
@@ -130,14 +126,16 @@ class ClienteResource extends Resource
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
-
+    
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageClientes::route('/'),
+            'index' => Pages\ManageFuncionarios::route('/'),
         ];
-    }
+    }    
 }

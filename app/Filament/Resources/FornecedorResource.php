@@ -65,11 +65,15 @@ class FornecedorResource extends Resource
                         Forms\Components\Select::make('estado_id')
                             ->label('Estado')
                             ->required()
+                            ->native(false)
+                            ->searchable()
                             ->options(Estado::all()->pluck('nome', 'id')->toArray())
                             ->reactive(),
                         Forms\Components\Select::make('cidade_id')
                             ->label('Cidade')
                             ->required()
+                            ->native(false)
+                            ->searchable()
                             ->options(function (callable $get) {
                                 $estado = Estado::find($get('estado_id'));
                                 if (!$estado) {
@@ -109,8 +113,10 @@ class FornecedorResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->dateTime(),
             ])
             ->filters([

@@ -85,8 +85,10 @@ class ProdutoResource extends Resource
                 Tables\Columns\TextColumn::make('valor_venda')
                     ->money('BRL'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->dateTime(),
             ])
             ->filters([

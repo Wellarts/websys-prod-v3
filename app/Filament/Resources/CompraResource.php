@@ -35,6 +35,8 @@ class CompraResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('fornecedor_id')
                             ->label('Fornecedor')
+                            ->native(false)
+                            ->searchable()
                             ->options(Fornecedor::all()->pluck('nome', 'id')->toArray())
                             ->required(),
                         Forms\Components\DatePicker::make('data_compra')
@@ -62,8 +64,10 @@ class CompraResource extends Resource
                 Tables\Columns\TextColumn::make('valor_total')
                     ->money('BRL'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->dateTime(),
             ])
             ->filters([
@@ -81,7 +85,7 @@ class CompraResource extends Resource
     {
         return [
             ItensCompraRelationManager::class,
-          //  ContasPagarRelationManager::class
+            ContasPagarRelationManager::class
         ];
     }
     
