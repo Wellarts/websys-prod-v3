@@ -80,11 +80,14 @@ class ContasPagarResource extends Resource
                          }
              ),
 
-            Forms\Components\TextInput::make('valor_parcela')
+             
+             Forms\Components\TextInput::make('valor_parcela')
                 ->readOnly()
                 ->required(),
-            Forms\Components\TextInput::make('valor_pago'),
-            Forms\Components\Textarea::make('obs'),
+            Forms\Components\TextInput::make('valor_pago')
+                ->label('Valor Pago'),
+            Forms\Components\Textarea::make('obs')
+                ->label('Observações'),
         ]);
     }
 
@@ -116,6 +119,7 @@ class ContasPagarResource extends Resource
                     ->label('Valor da Parcela')
                     ->money('BRL'),      
                 Tables\Columns\IconColumn::make('status')
+                    ->alignCenter()
                     ->label('Pago')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('data_pagamento')

@@ -13,6 +13,8 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -31,8 +33,8 @@ class ContasReceberResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('fornecedor_id')
-                ->label('Fornecedor')
+                Forms\Components\Select::make('cliente_id')
+                ->label('cliente')
                 ->options(Cliente::all()->pluck('nome', 'id')->toArray())
                 ->required()
                 ->disabled(),
@@ -64,14 +66,14 @@ class ContasReceberResource extends Resource
             ->afterStateUpdated(function (Get $get, Set $set) {
                          if($get('status') == 1)
                              {
-                                 $set('valor_pago', $get('valor_parcela'));
+                                 $set('valor_recebido', $get('valor_parcela'));
                                  $set('data_pagamento', Carbon::now()->format('Y-m-d'));
 
                              }
                          else
                              {
 
-                                 $set('valor_pago', 0);
+                                 $set('valor_recebido', 0);
                                  $set('data_pagamento', null);
                              }
                          }
@@ -80,8 +82,10 @@ class ContasReceberResource extends Resource
             Forms\Components\TextInput::make('valor_parcela')
                 ->readOnly()
                 ->required(),
-            Forms\Components\TextInput::make('valor_pago'),
-            Forms\Components\Textarea::make('obs'),
+            Forms\Components\TextInput::make('valor_recebido')
+                ->label('Valor Recebido'),
+            Forms\Components\Textarea::make('obs')
+                ->label('Observações'),
         ]);
             
     }
@@ -114,18 +118,19 @@ class ContasReceberResource extends Resource
                     ->label('Valor da Parcela')
                     ->money('BRL'),      
                 Tables\Columns\IconColumn::make('status')
-                    ->label('Pago')
+                    ->alignCenter()
+                    ->label('Recebido')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('data_pagamento')
                     ->label('Data do Recebimento')
                     ->badge()
                     ->color('success')
                     ->date(),    
-                Tables\Columns\TextColumn::make('valor_pago')
-                    ->label('Recebido')
+                Tables\Columns\TextColumn::make('valor_recebido')
+                    ->label('Valor Recebido')
                     ->badge()
-                    ->color('success')
-                    ->label('Valor Pago'),
+                    ->color('success'),
+                    
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -136,7 +141,23 @@ class ContasReceberResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Filter::make('Aberta')
+                ->query(fn (Builder $query): Builder => $query->where('status', false)),
+                 SelectFilter::make('cliente')->relationship('cliente', 'nome'),
+                 Tables\Filters\Filter::make('data_vencimento')
+                    ->form([
+                        Forms\Components\DatePicker::make('vencimento_de')
+                            ->label('Vencimento de:'),
+                        Forms\Components\DatePicker::make('vencimento_ate')
+                            ->label('Vencimento até:'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when($data['vencimento_de'],
+                                fn($query) => $query->whereDate('data_vencimento', '>=', $data['vencimento_de']))
+                            ->when($data['vencimento_ate'],
+                                fn($query) => $query->whereDate('data_vencimento', '<=', $data['vencimento_ate']));
+                    })
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -103,16 +103,19 @@ class ContasPagarRelationManager extends RelationManager
                                  } 
                              }      
                  ),
-            Forms\Components\TextInput::make('valor_pago')
-                ->default((function ($livewire): float {
-                        return $livewire->ownerRecord->valor_total;
-                })),
+           
             Forms\Components\TextInput::make('valor_parcela')
+                ->label('Valor da Parcela ')
                 ->default((function ($livewire): float {
                         return $livewire->ownerRecord->valor_total;
                 }))
                 ->required()
                 ->readOnly(),
+            Forms\Components\TextInput::make('valor_pago')
+                ->label('Valor Pago')
+                ->default((function ($livewire): float {
+                        return $livewire->ownerRecord->valor_total;
+                })),
             Forms\Components\Textarea::make('obs')
                 ->columnSpanFull()
                 ->label('Observações'),
@@ -149,6 +152,7 @@ class ContasPagarRelationManager extends RelationManager
                     ->label('Valor da Parcela')
                     ->money('BRL'),      
                 Tables\Columns\IconColumn::make('status')
+                    ->alignCenter()
                     ->label('Pago')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('data_pagamento')
