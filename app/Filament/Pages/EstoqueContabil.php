@@ -25,6 +25,21 @@ class EstoqueContabil extends Page  implements HasForms, HasTable
 
     protected static string $view = 'filament.pages.estoque-contabil';
 
+    protected static ?string $navigationGroup = 'Consultas';
+
+    public function mount() {
+        
+        $allEstoque = Produto::all();
+
+        foreach($allEstoque as $all)
+        {
+            $all->total_compra = ($all->estoque * $all->valor_compra);
+            $all->total_venda = ($all->estoque * $all->valor_venda);
+            $all->total_lucratividade = ($all->total_venda - $all->total_compra);
+            $all->save();
+        }
+    }
+
     protected function getTableQuery(): Builder
     {
         return Produto::query();
@@ -48,25 +63,27 @@ class EstoqueContabil extends Page  implements HasForms, HasTable
                     ->alignCenter()
                     ->money('BRL'),
                 TextColumn::make('total_compra')
-                    ->summarize(Sum::make()->label('Total'))
                     ->alignCenter()
                     ->getStateUsing(function (Produto $record): float {
-                        return (($record->estoque * $record->valor_compra)*100);
-                })
+                        return (($record->estoque * $record->valor_compra)); 
+                }) 
                     ->money('BRL')
+                    ->summarize(Sum::make()->label('Total')->money('BRL'))
                     ->color('danger'),
                 TextColumn::make('total_venda')
                     ->alignCenter()
                     ->getStateUsing(function (Produto $record): float {
-                    return ($record->estoque * $record->valor_venda)*100;
+                    return ($record->estoque * $record->valor_venda);
                 })
                     ->money('BRL')
+                    ->summarize(Sum::make()->label('Total')->money('BRL'))
                     ->color('warning'),
                 TextColumn::make('total_lucratividade')
                     ->alignCenter()
                     ->getStateUsing(function (Produto $record): float {
-                         return ((($record->estoque * $record->valor_venda)*100) - (($record->estoque * $record->valor_compra)*100));
+                         return ((($record->estoque * $record->valor_venda)) - (($record->estoque * $record->valor_compra)));
                 })
+                    ->summarize(Sum::make()->label('Total')->money('BRL'))
                     ->color('success')
                     ->money('BRL'),
                 

@@ -19,6 +19,7 @@ class Venda extends Model
         'data_venda',
         'formaPgmto_id',
         'valor_total',
+        'lucro_venda',
         'obs',
 
     ];
