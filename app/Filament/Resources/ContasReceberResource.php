@@ -33,12 +33,12 @@ class ContasReceberResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('cliente_id')
+            Forms\Components\Select::make('cliente_id')
                 ->label('cliente')
                 ->options(Cliente::all()->pluck('nome', 'id')->toArray())
                 ->required()
                 ->disabled(),
-            Forms\Components\TextInput::make('compra_id')
+            Forms\Components\TextInput::make('venda_id')
                 ->hidden()
                 ->required(),
             Forms\Components\TextInput::make('parcelas')
@@ -98,14 +98,15 @@ class ContasReceberResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ordem_parcela')
+                    ->alignCenter()
                     ->label('Parcela Nº'),
                 Tables\Columns\TextColumn::make('valor_total')
-                    ->label('Data do Vencimento')
                     ->badge()
                     ->color('warning')
                     ->label('Valor Total')
                     ->money('BRL'),  
                 Tables\Columns\TextColumn::make('data_vencimento')
+                    ->alignCenter()
                     ->label('Data do Vencimento')
                     ->badge()
                     ->color('danger')
@@ -113,6 +114,7 @@ class ContasReceberResource extends Resource
                     ->date(),
                               
                 Tables\Columns\TextColumn::make('valor_parcela')
+                    ->alignCenter()
                     ->badge()
                     ->color('danger')
                     ->label('Valor da Parcela')
@@ -122,16 +124,17 @@ class ContasReceberResource extends Resource
                     ->label('Recebido')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('data_pagamento')
+                    ->alignCenter()
                     ->label('Data do Recebimento')
                     ->badge()
                     ->color('success')
                     ->date(),    
                 Tables\Columns\TextColumn::make('valor_recebido')
+                    ->alignCenter()
                     ->label('Valor Recebido')
                     ->badge()
                     ->color('success'),
-                    
-                Tables\Columns\TextColumn::make('created_at')
+             Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

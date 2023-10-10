@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('produtos', function (Blueprint $table) {
             $table->id();
+            $table->string('codbar');
             $table->string('nome');
             $table->string('estoque');
             $table->decimal('valor_compra',10,2);

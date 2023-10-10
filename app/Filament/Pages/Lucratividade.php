@@ -55,6 +55,7 @@ class Lucratividade extends Page implements HasTable
     {
         return $table
             ->query(Venda::query())
+          //  ->defaultGroup('data_venda','year')
             ->columns([
                 TextColumn::make('id')
                     ->alignCenter()

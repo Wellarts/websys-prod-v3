@@ -41,12 +41,11 @@ class ProdutoResource extends Resource
                     ])
                     ->schema([
                         Forms\Components\TextInput::make('nome')
-                            ->columnSpan([
-                                'xl' => 2,
-                                '2xl' => 2,
-                            ])
                             ->required()
                             ->maxLength(255),
+                        Forms\Components\TextInput::make('codbar')
+                            ->label('Código de Barras')
+                            ->required(false),
                         Forms\Components\TextInput::make('estoque'),
                         Forms\Components\TextInput::make('valor_compra')
                             ->live(onBlur:true)
@@ -76,6 +75,8 @@ class ProdutoResource extends Resource
                 Tables\Columns\TextColumn::make('nome')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('codbar')
+                     ->searchable(),
                 Tables\Columns\TextColumn::make('estoque')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('valor_compra')
