@@ -14,6 +14,7 @@ class ContasReceber extends Model
     protected $fillable = [
         'cliente_id',
         'venda_id',
+        'vendapdv_id',
         'parcelas',
         'ordem_parcela',
         'data_vencimento',

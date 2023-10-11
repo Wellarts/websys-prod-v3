@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Cliente;
+use App\Models\ContasReceber;
 use App\Models\FluxoCaixa;
 use App\Models\FormaPgmto;
 use App\Models\Funcionario;
@@ -10,6 +11,7 @@ use App\Models\Produto;
 use App\Models\PDV as PDVs;
 use App\Models\Venda;
 use App\Models\VendaPDV;
+use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Page;
 use Filament\Forms\Components\Section;
@@ -55,6 +57,7 @@ class PDV extends  page implements HasForms, HasTable
     public $qtd;
     public $pdv;
     public $venda;
+    
 
     public function mount(): void
     {
@@ -164,7 +167,7 @@ class PDV extends  page implements HasForms, HasTable
                 ->successNotificationTitle('Venda em PDV finalizada com sucesso!')
                 ->keyBindings(['keypress', 'f7'])
                 ->form([
-                    Grid::make('3')
+                    Grid::make('4')
                         ->schema([
                             TextInput::make('id')
                                 ->label('Código da Venda')
@@ -209,10 +212,16 @@ class PDV extends  page implements HasForms, HasTable
                                 ->label('Troco'),
                             Radio::make('financeiro')
                                 ->label('Lançamento Financeiro')
+                                ->live()
                                 ->options([
                                     '1' => 'Direto no Caixa',
                                     '2' => 'Conta a Receber'
-                                ])->default('1')
+                                ])->default('1'),
+                            TextInput::make('parcelas')
+                                ->numeric()
+                                ->required()
+                                ->label('Qtd de Parcelas')
+                                ->hidden(fn (Get $get): bool => $get('financeiro') != '2')
 
 
                         ])
@@ -227,7 +236,7 @@ class PDV extends  page implements HasForms, HasTable
                         $updProduto->estoque -= $itens->qtd;
                         $updProduto->save();
                     }
-                })->successRedirectUrl(function ($data) {
+                })->successRedirectUrl(function ($data, $record) {
                     //   dd($data);
                     if ($data['financeiro'] == 1) {
 
@@ -242,8 +251,27 @@ class PDV extends  page implements HasForms, HasTable
 
                     } 
                     else {
-                        url(fn ($data): string => route('filament.admin.resources.contas-receber-p-d-vs.create', $data));
-                        //return  route('filament.admin.resources.contas-receber-p-d-vs.create', ['data' => $this->venda]);
+                        $valor_parcela = ($record->valor_total / $data['parcelas']);
+                        $vencimentos = Carbon::now();
+                        for($cont = 0; $cont < $data['parcelas']; $cont++)
+                        {
+                                            $dataVencimentos = $vencimentos->addDays(30);
+                                            $parcelas = [
+                                            'vendapdv_id' => $this->venda,
+                                            'cliente_id' => $data['cliente_id'],
+                                            'valor_total' => $data['valor_total'],
+                                            'parcelas' => $data['parcelas'],
+                                            'ordem_parcela' => $cont+1,
+                                            'data_vencimento' => $dataVencimentos,
+                                            'valor_recebido' => 0.00,
+                                            'status' => 0,
+                                           // 'obs' => $data['obs'],
+                                            'valor_parcela' => $valor_parcela,
+                                            ];
+                                ContasReceber::create($parcelas);
+                        }      
+
+                         return route('filament.admin.pages.p-d-v');
                     }
 
                     //  return route('filament.admin.pages.p-d-v'); 

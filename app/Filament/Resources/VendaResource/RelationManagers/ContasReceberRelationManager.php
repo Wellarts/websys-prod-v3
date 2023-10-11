@@ -48,7 +48,7 @@ class ContasReceberRelationManager extends RelationManager
         }))
             ->readOnly()
             ->required(),
-            Forms\Components\TextInput::make('parcelas')
+        Forms\Components\TextInput::make('parcelas')
             ->default('1')
             ->reactive()
             ->afterStateUpdated(function (Get $get, Set $set) {
