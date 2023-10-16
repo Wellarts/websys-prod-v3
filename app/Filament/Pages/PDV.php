@@ -265,7 +265,7 @@ class PDV extends  page implements HasForms, HasTable
                                             'data_vencimento' => $dataVencimentos,
                                             'valor_recebido' => 0.00,
                                             'status' => 0,
-                                           // 'obs' => $data['obs'],
+                                            'obs' => 'Venda em PDV - Nº '.$this->venda,
                                             'valor_parcela' => $valor_parcela,
                                             ];
                                 ContasReceber::create($parcelas);

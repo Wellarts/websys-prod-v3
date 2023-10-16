@@ -12,6 +12,8 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Columns\Summarizers\Count;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -78,10 +80,12 @@ class ItensCompraRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('produto.nome')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('qtd'),
+                Tables\Columns\TextColumn::make('qtd')
+                    ->summarize(Count::make()->label('Qtd de Produtos')),
                 Tables\Columns\TextColumn::make('valor_compra')
                     ->money('BRL'),
                 Tables\Columns\TextColumn::make('sub_total')
+                    ->summarize(Sum::make()->money('BRL')->label('Total'))
                     ->money('BRL'),
             ])
             ->filters([
@@ -110,15 +114,16 @@ class ItensCompraRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->before(function ($data) {
-                    $produto = Produto::find($data['produto_id']);
-                    $idItemCompra = ItensCompra::find($data['id']);
-                    $compra = Compra::find($data['compra_id']);
+                ->before(function ($data, $record) {
+                    $produto = Produto::find($record->produto_id);
+                    $idItemCompra = ItensCompra::find($record->id);
+                    $compra = Compra::find($record->compra_id);
+             //   dd( $data['qtd']);
                     $produto->estoque += ($data['qtd'] - $idItemCompra->qtd);
-                    $produto->valor_compra = $data['valor_compra'];
-                    $produto->valor_venda = ($produto->valor_compra + ($data['valor_compra'] * ($produto->lucratividade / 100)));
+                    $produto->valor_compra = $record->valor_compra;
+                    $produto->valor_venda = ($produto->valor_compra + ($record->valor_compra * ($produto->lucratividade / 100)));
                     $compra->valor_total += ($data['sub_total'] - $idItemCompra->sub_total);
-                   // dd($compra->valor_total);
+                  // dd($data['sub_total'], $idItemCompra->sub_total,  $compra->valor_total);
                     $compra->save();
                     $produto->save();
                 }),

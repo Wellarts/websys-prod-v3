@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\Summarizers\Sum;
 
 class CompraResource extends Resource
 {
@@ -62,6 +63,7 @@ class CompraResource extends Resource
                     ->searchable()
                     ->date(),
                 Tables\Columns\TextColumn::make('valor_total')
+                    ->summarize(Sum::make()->money('BRL')->label('Total'))
                     ->money('BRL'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->toggleable(isToggledHiddenByDefault: true)

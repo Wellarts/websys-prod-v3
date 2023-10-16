@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\CompraResource\Pages;
 
 use App\Filament\Resources\CompraResource;
-use App\Livewire\TotalCompraStatsOverview;
+use App\Livewire\TotalVendaStatsOverview;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -22,7 +22,7 @@ class EditCompra extends EditRecord
     {
 
         return [
-           TotalCompraStatsOverview::class
+           TotalVendaStatsOverview::class
 
         ];
     }
