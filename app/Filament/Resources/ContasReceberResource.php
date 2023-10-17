@@ -8,6 +8,7 @@ use App\Models\Cliente;
 use App\Models\ContasReceber;
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -33,11 +34,21 @@ class ContasReceberResource extends Resource
     {
         return $form
             ->schema([
+                Grid::make('4')
+                    ->schema([
             Forms\Components\Select::make('cliente_id')
-                ->label('cliente')
+                ->columnSpan([
+                    'xl' => 2,
+                    '2xl' => 2,
+                ])
+                ->label('Cliente')
                 ->options(Cliente::all()->pluck('nome', 'id')->toArray())
                 ->required()
                 ->disabled(),
+            Forms\Components\TextInput::make('ordem_parcela')
+                ->label('Parcela Nº')
+                ->readOnly()
+                ->maxLength(10),
             Forms\Components\TextInput::make('venda_id')
                 ->hidden()
                 ->required(),
@@ -45,19 +56,31 @@ class ContasReceberResource extends Resource
                 ->required()
                 ->readOnly()
                 ->maxLength(255),
-            Forms\Components\TextInput::make('ordem_parcela')
-                ->label('Parcela Nº')
-                ->readOnly()
-                ->maxLength(10),
+           
             Forms\Components\DatePicker::make('data_vencimento')
+                ->label('Data do Vencimento')
                 ->displayFormat('d/m/Y')
                 ->required(),
-            Forms\Components\TextInput::make('valor_total')
-                ->readOnly()
-                ->required(),
+            
             Forms\Components\DatePicker::make('data_pagamento')
                 ->label('Data do Recebimento')
                 ->displayFormat('d/m/Y'),
+                Forms\Components\TextInput::make('valor_total')
+                ->label('Valor Total')
+                ->readOnly()
+                ->required(),
+                Forms\Components\TextInput::make('valor_parcela')
+                ->label('Valor da Parcela')
+                ->readOnly()
+                ->required(),
+            Forms\Components\TextInput::make('valor_recebido')
+                ->label('Valor Recebido'),
+            Forms\Components\Textarea::make('obs')
+                ->columnSpan([
+                    'xl' => 3,
+                    '2xl' => 3,
+                ])
+                ->label('Observações'),
             Forms\Components\Toggle::make('status')
             ->default('true')
             ->label('Recebido')
@@ -79,13 +102,10 @@ class ContasReceberResource extends Resource
                          }
              ),
 
-            Forms\Components\TextInput::make('valor_parcela')
-                ->readOnly()
-                ->required(),
-            Forms\Components\TextInput::make('valor_recebido')
-                ->label('Valor Recebido'),
-            Forms\Components\Textarea::make('obs')
-                ->label('Observações'),
+           
+            
+                    ])
+            
         ]);
             
     }

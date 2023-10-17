@@ -9,6 +9,7 @@ use App\Models\FluxoCaixa;
 use App\Models\Fornecedor;
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -34,60 +35,80 @@ class ContasPagarResource extends Resource
     {
         return $form
             ->schema([
-            Forms\Components\Select::make('fornecedor_id')
-                ->label('Fornecedor')
-                ->options(Fornecedor::all()->pluck('nome', 'id')->toArray())
-                ->required()
-                ->disabled(),
-            Forms\Components\TextInput::make('compra_id')
-                ->hidden()
-                ->required(),
-            Forms\Components\TextInput::make('parcelas')
-                ->required()
-                ->readOnly()
-                ->maxLength(255),
-            Forms\Components\TextInput::make('ordem_parcela')
-                ->label('Parcela Nº')
-                ->readOnly()
-                ->maxLength(10),
-            Forms\Components\DatePicker::make('data_vencimento')
-                ->displayFormat('d/m/Y')
-                ->required(),
-            Forms\Components\TextInput::make('valor_total')
-                ->readOnly()
-                ->required(),
-            Forms\Components\DatePicker::make('data_pagamento')
-                ->label('Data do Pagamento')
-                ->displayFormat('d/m/Y'),
-            Forms\Components\Toggle::make('status')
-            ->default('true')
-            ->label('Pago')
-            ->required()
-            ->live()
-            ->afterStateUpdated(function (Get $get, Set $set) {
-                         if($get('status') == 1)
-                             {
-                                 $set('valor_pago', $get('valor_parcela'));
-                                 $set('data_pagamento', Carbon::now()->format('Y-m-d'));
-
-                             }
-                         else
-                             {
-
-                                 $set('valor_pago', 0);
-                                 $set('data_pagamento', null);
-                             }
-                         }
-             ),
-
-             
-             Forms\Components\TextInput::make('valor_parcela')
-                ->readOnly()
-                ->required(),
-            Forms\Components\TextInput::make('valor_pago')
-                ->label('Valor Pago'),
-            Forms\Components\Textarea::make('obs')
-                ->label('Observações'),
+                Grid::make('4')
+                    ->schema([
+                        Forms\Components\Select::make('fornecedor_id')
+                        ->columnSpan([
+                            'xl' => 2,
+                            '2xl' => 2,
+                        ])
+                        ->label('Fornecedor')
+                        ->options(Fornecedor::all()->pluck('nome', 'id')->toArray())
+                        ->required()
+                        ->disabled(),
+                    Forms\Components\TextInput::make('compra_id')
+                        ->hidden()
+                        ->required(),
+                    Forms\Components\TextInput::make('ordem_parcela')
+                        ->label('Parcela Nº')
+                        ->readOnly()
+                        ->maxLength(10),
+                    Forms\Components\TextInput::make('parcelas')
+                        ->required()
+                        ->readOnly()
+                        ->maxLength(255),
+                    
+                    Forms\Components\DatePicker::make('data_vencimento')
+                        ->label('Data do Vencimento')
+                        ->displayFormat('d/m/Y')
+                        ->required(),
+                    Forms\Components\DatePicker::make('data_pagamento')
+                        ->label('Data do Pagamento')
+                        ->displayFormat('d/m/Y'),
+                    Forms\Components\TextInput::make('valor_total')
+                        ->label('Valor Total')
+                        ->readOnly()
+                        ->required(),
+                    Forms\Components\TextInput::make('valor_parcela')
+                        ->label('Valor da Parcela')
+                        ->readOnly()
+                        ->required(),
+                    Forms\Components\TextInput::make('valor_pago')
+                        ->label('Valor Pago'),
+                    Forms\Components\Textarea::make('obs')
+                        ->columnSpan([
+                            'xl' => 3,
+                            '2xl' => 3,
+                        ])
+                        ->label('Observações'),
+                        ]),
+                    Forms\Components\Toggle::make('status')
+                       /* ->columnSpan([
+                            'xl' => 3,
+                            '2xl' => 3,
+                        ]) */
+                        ->inlineLabel(false)
+                        ->default('true')
+                        ->label('Pago')
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(function (Get $get, Set $set) {
+                                     if($get('status') == 1)
+                                         {
+                                             $set('valor_pago', $get('valor_parcela'));
+                                             $set('data_pagamento', Carbon::now()->format('Y-m-d'));
+            
+                                         }
+                                     else
+                                         {
+            
+                                             $set('valor_pago', 0);
+                                             $set('data_pagamento', null);
+                                         }
+                                     }
+                         ),
+                   
+            
         ]);
     }
 
@@ -99,6 +120,7 @@ class ContasPagarResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ordem_parcela')
+                    ->alignCenter()
                     ->label('Parcela Nº'),
                 Tables\Columns\TextColumn::make('valor_total')
                     ->label('Data do Vencimento')

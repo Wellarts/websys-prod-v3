@@ -15,7 +15,8 @@ class ManageFluxoCaixas extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Lançamento'),
+                ->label('Lançamento')
+                ->modalHeading('Lançamento no Caixa'),
         ];
     }
 

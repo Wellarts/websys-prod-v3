@@ -2,6 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Livewire\ComprasMesChart;
+use App\Livewire\PagarHojeStatsOverview;
+use App\Livewire\ReceberHojeStatsOverview;
+use App\Livewire\VendasMesChart;
+use App\Livewire\VendasPDVMesChart;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -38,7 +43,13 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+              //  Widgets\FilamentInfoWidget::class,
+                PagarHojeStatsOverview::class,
+                ReceberHojeStatsOverview::class,
+                VendasMesChart::class,
+                VendasPDVMesChart::class,
+                ComprasMesChart::class,
+
             ])
             ->middleware([
                 EncryptCookies::class,

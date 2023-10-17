@@ -35,8 +35,7 @@ use Filament\Forms\Components\Radio;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\DeleteAction;
-
-
+use Filament\Tables\Columns\Summarizers\Count;
 
 class PDV extends  page implements HasForms, HasTable
 {
@@ -107,6 +106,7 @@ class PDV extends  page implements HasForms, HasTable
                     'qtd' => 1,
                     'sub_total' => $produto->valor_venda * 1,
                     'valor_custo_atual' => $produto->valor_compra,
+                    'total_custo_atual' => $produto->valor_compra,
                 ];
 
                 PDVs::create($addProduto);
@@ -133,9 +133,11 @@ class PDV extends  page implements HasForms, HasTable
 
             TextColumn::make('produto.nome'),
             TextInputColumn::make('qtd')
+                ->summarize(Sum::make()->label('Qtd Produtos'))
                 ->updateStateUsing(function (Model $record, $state) {
                     $record->sub_total = ($state * $record->valor_venda);
                     $record->qtd = $state;
+                    $record->total_custo_atual = ($record->valor_custo_atual * $state);
                     $record->save();
                 })
 
@@ -162,10 +164,12 @@ class PDV extends  page implements HasForms, HasTable
         return [
             CreateAction::make()
                 ->label('Finalizar Venda (F7)')
+                ->modalHeading('Finalizar Venda - PDV')
                 ->model(VendaPDV::class)
                 ->createAnother(false)
                 ->successNotificationTitle('Venda em PDV finalizada com sucesso!')
                 ->keyBindings(['keypress', 'f7'])
+               // ->keyBindings(['command+s', 'ctrl+s'])
                 ->form([
                     Grid::make('4')
                         ->schema([

@@ -6,6 +6,7 @@ use App\Models\ContasReceber;
 use App\Models\FluxoCaixa;
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -25,100 +26,115 @@ class ContasReceberRelationManager extends RelationManager
     {
         return $form
             ->schema([
-        Forms\Components\TextInput::make('venda_id')
-            ->hidden()
-            ->required(),
-        Forms\Components\Select::make('cliente_id')
-            ->label('Cliente')
-            ->default((function ($livewire): int {
-                return $livewire->ownerRecord->cliente_id;
-            }))
+                Grid::make('4')
+                    ->schema([
+                        Forms\Components\TextInput::make('venda_id')
+                        ->hidden()
+                        ->required(),
+                    Forms\Components\Select::make('cliente_id')
+                    ->columnSpan([
+                        'xl' => 2,
+                        '2xl' => 2,
+                    ])
+                        ->label('Cliente')
+                        ->default((function ($livewire): int {
+                            return $livewire->ownerRecord->cliente_id;
+                        }))
+                        
+                        ->options(function (RelationManager $livewire): array {
+                            return $livewire->ownerRecord
+                                ->cliente()
+                                ->pluck('nome', 'id')
+                                ->toArray();
+                        }) 
+                        ->required(),
+                    Forms\Components\TextInput::make('ordem_parcela')
+                        ->label('Parcela Nº')
+                        ->readOnly()
+                        ->default('1')
+                        ->required(),
+                   
+                    Forms\Components\TextInput::make('parcelas')
+                        ->default('1')
+                        ->reactive()
+                        ->afterStateUpdated(function (Get $get, Set $set) {
+                            if($get('parcelas') != 1)
+                               {
+                                $set('valor_parcela', (($get('valor_total') / $get('parcelas'))));
+                                $set('status', 0);
+                                $set('valor_recebido', 0);
+                                $set('data_pagamento', null);
+                                $set('data_vencimento',  Carbon::now()->addDays(30)->format('Y-m-d'));
+                               }
+                            else
+                                {
+                                    $set('valor_parcela', $get('valor_total'));
+                                    $set('status', 1);
+                                    $set('valor_recebido', $get('valor_total'));
+                                    $set('data_pagamento', Carbon::now()->format('Y-m-d'));
+                                    $set('data_vencimento',  Carbon::now()->format('Y-m-d'));  
+                                }    
+              
+                        })
+                        ->required(),
+                    Forms\Components\DatePicker::make('data_pagamento')
+                        ->default(now())
+                        ->displayFormat('d/m/Y')
+                        ->label("Data do Pagamento"),
+                   
+                    Forms\Components\DatePicker::make('data_vencimento')
+                         ->default(now())
+                         ->label("Data do Vencimento")
+                         ->displayFormat('d/m/Y')
+                        ->required(),
+                    Forms\Components\TextInput::make('valor_total')
+                        ->label('Valor Total')
+                        ->default((function ($livewire): float {
+                        return $livewire->ownerRecord->valor_total;
+                    }))
+                        ->readOnly()
+                        ->required(),
+                    
+                   
+                    Forms\Components\TextInput::make('valor_parcela')
+                        ->label('Valor da Parcela')
+                        ->default((function ($livewire): float {
+                                return $livewire->ownerRecord->valor_total;
+                        }))
+                        ->required()
+                        ->readOnly(),
+                    Forms\Components\TextInput::make('valor_recebido')
+                        ->default((function ($livewire): float {
+                                return $livewire->ownerRecord->valor_total;
+                        })),
+                    Forms\Components\Textarea::make('obs')
+                    ->columnSpan([
+                        'xl' => 3,
+                        '2xl' => 3,
+                    ])
+                        ->label('Observações'),
+                        Forms\Components\Toggle::make('status')
+                        ->default('true')
+                        ->label('Recebido')
+                        ->required()
+                        ->reactive()
+                        ->afterStateUpdated(function (Get $get, Set $set) {
+                                     if($get('status') == 1)
+                                         {
+                                             $set('valor_recebido', $get('valor_parcela'));
+                                             $set('data_pagamento', Carbon::now()->format('Y-m-d'));
             
-            ->options(function (RelationManager $livewire): array {
-                return $livewire->ownerRecord
-                    ->cliente()
-                    ->pluck('nome', 'id')
-                    ->toArray();
-            }) 
-            ->required(),
-        Forms\Components\TextInput::make('valor_total')
-            ->label('Valor Total')
-            ->default((function ($livewire): float {
-            return $livewire->ownerRecord->valor_total;
-        }))
-            ->readOnly()
-            ->required(),
-        Forms\Components\TextInput::make('parcelas')
-            ->default('1')
-            ->reactive()
-            ->afterStateUpdated(function (Get $get, Set $set) {
-                if($get('parcelas') != 1)
-                   {
-                    $set('valor_parcela', (($get('valor_total') / $get('parcelas'))));
-                    $set('status', 0);
-                    $set('valor_recebido', 0);
-                    $set('data_pagamento', null);
-                    $set('data_vencimento',  Carbon::now()->addDays(30)->format('Y-m-d'));
-                   }
-                else
-                    {
-                        $set('valor_parcela', $get('valor_total'));
-                        $set('status', 1);
-                        $set('valor_recebido', $get('valor_total'));
-                        $set('data_pagamento', Carbon::now()->format('Y-m-d'));
-                        $set('data_vencimento',  Carbon::now()->format('Y-m-d'));  
-                    }    
-  
-            })
-            ->required(),
-        Forms\Components\DatePicker::make('data_pagamento')
-            ->default(now())
-            ->displayFormat('d/m/Y')
-            ->label("Data do Pagamento"),
-       Forms\Components\TextInput::make('ordem_parcela')
-            ->label('Parcela Nº')
-            ->readOnly()
-            ->default('1')
-            ->required(),
-        Forms\Components\DatePicker::make('data_vencimento')
-             ->default(now())
-             ->label("Data do Vencimento")
-             ->displayFormat('d/m/Y')
-            ->required(),
-        Forms\Components\Toggle::make('status')
-            ->default('true')
-            ->label('Recebido')
-            ->required()
-            ->reactive()
-            ->afterStateUpdated(function (Get $get, Set $set) {
-                         if($get('status') == 1)
-                             {
-                                 $set('valor_recebido', $get('valor_parcela'));
-                                 $set('data_pagamento', Carbon::now()->format('Y-m-d'));
-
-                             }
-                         else
-                             {
-                                 
-                                 $set('valor_recebido', 0);
-                                 $set('data_pagamento', null);
-                             } 
-                         }      
-             ),
+                                         }
+                                     else
+                                         {
+                                             
+                                             $set('valor_recebido', 0);
+                                             $set('data_pagamento', null);
+                                         } 
+                                     }      
+                         ),
+                    ])
        
-        Forms\Components\TextInput::make('valor_parcela')
-            ->default((function ($livewire): float {
-                    return $livewire->ownerRecord->valor_total;
-            }))
-            ->required()
-            ->readOnly(),
-        Forms\Components\TextInput::make('valor_recebido')
-            ->default((function ($livewire): float {
-                    return $livewire->ownerRecord->valor_total;
-            })),
-        Forms\Components\Textarea::make('obs')
-            ->columnSpanFull()
-            ->label('Observações'),
             
         ]);
     }

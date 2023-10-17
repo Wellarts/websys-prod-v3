@@ -38,10 +38,11 @@ class ItensCompraRelationManager extends RelationManager
                     })),
                     
                 Forms\Components\Select::make('produto_id')
-                    ->options(Produto::all()->pluck('nome', 'id')->toArray())
+                    ->relationship(name: 'produto', titleAttribute: 'nome')
+                    ->searchable(['nome', 'codbar'])
+                 //  ->options(Produto::all()->pluck('nome', 'id')->toArray())
                     ->disabled(fn ($context) => $context == 'edit')
-                    ->searchable()
-                    ->live(onBlur:true)
+                    ->live(debounce:200)
                     ->required()
                     ->label('Produto')
                     ->afterStateUpdated(function ($state, callable $set) {
@@ -51,8 +52,9 @@ class ItensCompraRelationManager extends RelationManager
                         }
 
                     }
-                ),
+                ), 
                 Forms\Components\TextInput::make('valor_compra')
+                    ->label('Valor Compra')
                     ->live(onBlur:true)
                     ->required()
                     ->afterStateUpdated(function (Get $get, Set $set) {

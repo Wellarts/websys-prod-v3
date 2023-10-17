@@ -35,8 +35,8 @@ class VendaResource extends Resource
             ->schema([
                 Section::make()
                 ->columns([
-                    'xl' => 3,
-                    '2xl' => 3,
+                    'xl' => 4,
+                    '2xl' => 4,
                 ])
                 ->schema([
                     Forms\Components\Select::make('cliente_id')

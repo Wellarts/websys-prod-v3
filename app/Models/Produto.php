@@ -34,6 +34,11 @@ class Produto extends Model
         return $this->hasMany(ItensCompra::class);
     }
 
+    public function itensVenda() 
+    {
+        return $this->hasMany(ItensVenda::class);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

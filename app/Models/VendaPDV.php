@@ -38,6 +38,10 @@ class VendaPDV extends Model
         return $this->belongsTo(FormaPgmto::class);
     }
 
+    public function itensVenda()
+    {
+        return $this->hasMany(PDV::class);
+    }
     
     public function contasReceber()
     {

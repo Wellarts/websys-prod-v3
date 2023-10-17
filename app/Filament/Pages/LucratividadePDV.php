@@ -2,9 +2,8 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\ItensVenda;
-use App\Models\Venda;
-use Filament\Forms\Components\DatePicker;
+use App\Models\VendaPDV;
+use App\Models\PDV;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
@@ -13,32 +12,35 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Filament\Forms\Components\DatePicker;
 
-
-class Lucratividade extends Page implements HasTable
+class LucratividadePDV extends Page implements HasTable
 {
-
     use InteractsWithTable;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.pages.lucratividade';
+    protected static string $view = 'filament.pages.lucratividade-p-d-v';
 
     protected static ?string $navigationGroup = 'Consultas';
+
+    protected static ?string $navigationLabel = 'Lucratividade PDV';
+
+    protected static ?string $title = 'Lucratividade PDV';
 
 
     public function mount()
     {
 
-        $vendas = Venda::all();
+        $vendas = VendaPDV::all();
 
         foreach ($vendas as $venda) {
-
-            $itensVenda = ItensVenda::where('venda_id', $venda->id)->get();
-
+          //  dd($venda);
+            $itensVenda = PDV::where('venda_p_d_v_id', $venda->id)->get();
+           // dd($itensVenda);
             foreach ($itensVenda as $itens) {
                 $custo_venda = +$itens->total_custo_atual;
-                // dd($custo_venda);
+               //  dd($itens->total_custo_atual);
 
             }
 
@@ -47,11 +49,10 @@ class Lucratividade extends Page implements HasTable
         }
     }
 
-   
     public function table(Table $table): Table
     {
         return $table
-            ->query(Venda::query())
+            ->query(VendaPDV::query())
           //  ->defaultGroup('data_venda','year')
             ->columns([
                 TextColumn::make('id')
@@ -84,7 +85,7 @@ class Lucratividade extends Page implements HasTable
                     ->label('Lucro por Venda')
                     ->money('BRL')
                     ->color('success')
-                    ->getStateUsing(function (Venda $record): float {
+                    ->getStateUsing(function (VendaPDV $record): float {
                         $custoProdutos = $record->itensVenda()->sum('total_custo_atual');
                         return ($record->valor_total - $custoProdutos);
                     })
@@ -114,4 +115,6 @@ class Lucratividade extends Page implements HasTable
                     })
             ]);
     }
+
+
 }

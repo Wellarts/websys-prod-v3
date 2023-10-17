@@ -77,6 +77,7 @@ class VendaPDVResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Venda')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('cliente.nome')
                     ->sortable()

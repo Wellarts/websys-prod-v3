@@ -6,6 +6,7 @@ use App\Models\ItensVenda;
 use App\Models\Produto;
 use App\Models\Venda;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -27,7 +28,9 @@ class ItensVendaRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Hidden::make('id'),
+                Grid::make('4')
+                    ->schema([
+                        Forms\Components\Hidden::make('id'),
 
                 Forms\Components\Hidden::make('venda_id')
                     ->default((function ($livewire): int {
@@ -35,9 +38,13 @@ class ItensVendaRelationManager extends RelationManager
                     })),
 
                 Forms\Components\Select::make('produto_id')
-                    ->options(Produto::all()->pluck('nome', 'id')->toArray())
+                    ->relationship(name: 'produto', titleAttribute: 'nome')
+                    ->searchable(['nome', 'codbar'])
                     ->disableOptionWhen(fn ($context) => $context == 'edit')
-                    ->searchable()
+                    ->columnSpan([
+                        'xl' => 2,
+                        '2xl' => 2,
+                    ])
                     ->reactive()
                     ->required()
                     ->label('Produto')
@@ -55,6 +62,7 @@ class ItensVendaRelationManager extends RelationManager
                         }
                     ),
                 Forms\Components\TextInput::make('estoque_atual')
+                    ->label('Estoque Atual')
                     ->hidden(fn (string $context): bool => $context === 'edit')
                     ->readOnly(),
 
@@ -83,6 +91,8 @@ class ItensVendaRelationManager extends RelationManager
                 Forms\Components\Hidden::make('valor_custo_atual'),
                 Forms\Components\Hidden::make('total_custo_atual'),
 
+                    ])
+                
             ]);
     }
 

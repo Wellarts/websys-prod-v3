@@ -6,9 +6,11 @@ use App\Filament\Resources\FluxoCaixaResource\Pages;
 use App\Filament\Resources\FluxoCaixaResource\RelationManagers;
 use App\Models\FluxoCaixa;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -27,19 +29,28 @@ class FluxoCaixaResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('tipo')
-                ->options([
-                    'CREDITO' => 'CREDITO',
-                    'DEBITO' => 'DEBITO',
-                ])
-                ->required(),
+                Grid::make('4')
+                    ->schema([
+                        Forms\Components\Select::make('tipo')
+                            ->options([
+                                'CREDITO' => 'CRÉDITO',
+                                'DEBITO' => 'DÉBITO',
+                            ])
+                            ->required(),
 
-            Forms\Components\TextInput::make('valor')
-                ->required(),
+                        Forms\Components\TextInput::make('valor')
+                            ->hint('Use (-) no Débito')
+                            ->required(),
 
-            Forms\Components\Textarea::make('obs')
-                ->columnSpanFull()
-                ->required(),
+                        Forms\Components\Textarea::make('obs')
+                            ->label('Descrição')
+                            ->columnSpan([
+                                'xl' => 2,
+                                '2xl' => 2,
+                            ])
+                            ->required(),
+                    ])
+
             ]);
     }
 
@@ -48,16 +59,17 @@ class FluxoCaixaResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('tipo')
-                ->badge()
-                ->color(static function ($state): string {
-                    if ($state === 'CREDITO') {
-                        return 'success';
-                    }
+                    ->badge()
+                    ->color(static function ($state): string {
+                        if ($state === 'CREDITO') {
+                            return 'success';
+                        }
 
-                    return 'danger';
-                })
-                ->sortable(),
+                        return 'danger';
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('valor')
+                    ->summarize(Sum::make()->money('BRL')->label('Total'))
                     ->alignCenter()
                     ->money('BRL'),
                 Tables\Columns\TextColumn::make('obs')
@@ -85,11 +97,11 @@ class FluxoCaixaResource extends Resource
                 ]),
             ]);
     }
-    
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ManageFluxoCaixas::route('/'),
         ];
-    }    
+    }
 }
