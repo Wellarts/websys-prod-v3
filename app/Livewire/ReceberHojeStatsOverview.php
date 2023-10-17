@@ -24,6 +24,10 @@ class ReceberHojeStatsOverview extends BaseWidget
             ->description('Hoje')
             ->descriptionIcon('heroicon-m-arrow-trending-up')
             ->color('success'),
+        Stat::make('Total Recebido', number_format(DB::table('contas_recebers')->where('status', 1)->sum('valor_parcela'),2, ",", "."))
+            ->description('Todo Período')
+            ->descriptionIcon('heroicon-m-arrow-trending-up')
+            ->color('success'),
 
         ];
     }

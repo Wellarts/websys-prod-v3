@@ -28,6 +28,7 @@ class CompraStatsOverview extends BaseWidget
                 ->description('Hoje')
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('success'),
+            
         ];
     }
 }
