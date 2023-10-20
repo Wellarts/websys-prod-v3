@@ -51,7 +51,7 @@ class VendaResource extends Resource
                         ->searchable()
                         ->options(Funcionario::all()->pluck('nome', 'id')->toArray())
                         ->required(),
-                    Forms\Components\Select::make('formaPgmto_id')
+                    Forms\Components\Select::make('forma_pgmto_id')
                         ->label('Forma de Pagamento')
                         ->native(false)
                         ->searchable()
@@ -94,6 +94,9 @@ class VendaResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('Imprimir')
+                ->url(fn (Venda $record): string => route('comprovante', $record))
+                ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

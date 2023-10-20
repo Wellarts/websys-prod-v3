@@ -52,6 +52,11 @@ class EstoqueContabil extends Page  implements HasForms, HasTable
                     ->label('Produto')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('codbar')
+                    ->label('Código de Barras')
+                    ->sortable()
+                    ->alignCenter()
+                    ->searchable(),
                 TextColumn::make('estoque')
                     ->alignCenter(),
                 TextColumn::make('valor_compra')

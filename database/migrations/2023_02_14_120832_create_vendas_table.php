@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('cliente_id')->constrained('clientes')->restrictOnDelete();
             $table->foreignId('funcionario_id')->constrained('funcionarios')->restrictOnDelete();
             $table->date('data_venda');
-            $table->foreignId('formaPgmto_id')->constrained('formaPgmtos')->restrictOnDelete();
+            $table->foreignId('forma_pgmto_id')->constrained('formaPgmtos')->restrictOnDelete();
             $table->decimal('valor_total',10,2);
             $table->longText('obs');
             $table->timestamps();

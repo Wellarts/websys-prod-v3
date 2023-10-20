@@ -118,6 +118,7 @@ class ContasReceberRelationManager extends RelationManager
                         ->label('Recebido')
                         ->required()
                         ->reactive()
+                       // ->hidden(fn (Get $get): bool => $get('parcelas') != '1')
                         ->afterStateUpdated(function (Get $get, Set $set) {
                                      if($get('status') == 1)
                                          {

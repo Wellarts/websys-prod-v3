@@ -17,7 +17,7 @@ class Venda extends Model
         'cliente_id',
         'funcionario_id',
         'data_venda',
-        'formaPgmto_id',
+        'forma_pgmto_id',
         'valor_total',
         'lucro_venda',
         'obs',
