@@ -43,6 +43,7 @@ class ItensCompraRelationManager extends RelationManager
                  //  ->options(Produto::all()->pluck('nome', 'id')->toArray())
                     ->disabled(fn ($context) => $context == 'edit')
                     ->live(debounce:200)
+                    ->native(false)
                     ->required()
                     ->label('Produto')
                     ->afterStateUpdated(function ($state, callable $set) {
