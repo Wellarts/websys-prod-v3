@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\ItensVenda;
 use App\Models\Venda;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Get;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
@@ -13,7 +14,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class Lucratividade extends Page implements HasTable
 {
@@ -26,26 +27,21 @@ class Lucratividade extends Page implements HasTable
 
     protected static ?string $navigationGroup = 'Consultas';
 
+    
+
 
     public function mount()
     {
 
         $vendas = Venda::all();
-
+      
         foreach ($vendas as $venda) {
-
-            $itensVenda = ItensVenda::where('venda_id', $venda->id)->get();
-
-            foreach ($itensVenda as $itens) {
-                $custo_venda = +$itens->total_custo_atual;
-                // dd($custo_venda);
-
-            }
-
-            $venda->lucro_venda = ($venda->valor_total - $custo_venda);
-            $venda->save();
+                $custo_venda = $venda->itensVenda()->sum('total_custo_atual');
+                $venda->lucro_venda = ($venda->valor_total - $custo_venda);
+                $venda->save();
+                
         }
-    }
+    } 
 
    
     public function table(Table $table): Table
@@ -65,6 +61,7 @@ class Lucratividade extends Page implements HasTable
                     ->sortable()
                     ->alignCenter(),
                 TextColumn::make('itens_venda_sum_total_custo_atual')->sum('itensVenda', 'total_custo_atual')
+                    ->summarize(Sum::make()->money('BRL')->label('Total'))
                     ->badge()
                     ->alignCenter()
                     ->label('Custo Produtos')
@@ -78,16 +75,16 @@ class Lucratividade extends Page implements HasTable
                     ->money('BRL')
                     ->color('warning'),
                 TextColumn::make('lucro_venda')
-                    ->summarize(Sum::make()->money('BRL')->label('Total'))
+                    ->summarize(Sum::make()->label('Total'))
                     ->badge()
                     ->alignCenter()
                     ->label('Lucro por Venda')
                     ->money('BRL')
                     ->color('success')
-                    ->getStateUsing(function (Venda $record): float {
+                   /* ->getStateUsing(function (Venda $record) {
                         $custoProdutos = $record->itensVenda()->sum('total_custo_atual');
-                        return ($record->valor_total - $custoProdutos);
-                    })
+                       return ($record->valor_total - $custoProdutos);
+                    })  */
 
 
             ])
@@ -112,6 +109,10 @@ class Lucratividade extends Page implements HasTable
                                 fn ($query) => $query->whereDate('data_venda', '<=', $data['venda_ate'])
                             );
                     })
+                ])
+            ->bulkActions([
+                
+                ExportBulkAction::make(),
             ]);
     }
 }

@@ -95,7 +95,7 @@ class VendaResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('Imprimir')
-                ->url(fn (Venda $record): string => route('comprovante', $record))
+                ->url(fn (Venda $record): string => route('comprovanteNormal', $record))
                 ->openUrlInNewTab(),
             ])
             ->bulkActions([

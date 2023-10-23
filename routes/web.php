@@ -18,4 +18,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('pdf/{id}',[ComprovantesController::class, 'geraPdf'])->name('comprovante');
+Route::get('pdf/{id}',[ComprovantesController::class, 'geraPdf'])->name('comprovanteNormal');
+Route::get('pdfPdv/{id}',[ComprovantesController::class, 'geraPdfPDV'])->name('comprovantePDV');
+

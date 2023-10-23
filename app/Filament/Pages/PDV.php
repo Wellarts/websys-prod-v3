@@ -42,11 +42,11 @@ class PDV extends  page implements HasForms, HasTable
 
     use InteractsWithForms, InteractsWithTable;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-s-shopping-cart';
 
     protected static string $view = 'filament.pages.p-d-v';
 
-    protected static ?string $title = 'PDV Express';
+    protected static ?string $title = 'PDV';
 
     protected static ?string $navigationGroup = 'Ponto de Venda';
 
@@ -185,7 +185,7 @@ class PDV extends  page implements HasForms, HasTable
                                 ->label('Vendedor')
                                 ->default('1')
                                 ->options(Funcionario::all()->pluck('nome', 'id')->toArray()),
-                            Select::make('formaPgmto_id')
+                            Select::make('forma_pgmto_id')
                                 ->label('Forma de Pagamento')
                                 ->default('1')
                                 ->native(false)
@@ -249,7 +249,10 @@ class PDV extends  page implements HasForms, HasTable
                             'tipo'  => 'CREDITO',
                             'obs'   => 'Recebido da venda nº: ' .$this->venda. '',
                         ];
-
+                        Notification::make()
+                                ->title('Valor lançado no fluxo de caixa!')
+                                ->success()
+                                ->send();
                         FluxoCaixa::create($addFluxoCaixa);
                         return route('filament.admin.pages.p-d-v');
 

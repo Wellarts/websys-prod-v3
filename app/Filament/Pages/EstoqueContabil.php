@@ -27,6 +27,10 @@ class EstoqueContabil extends Page  implements HasForms, HasTable
 
     protected static ?string $navigationGroup = 'Consultas';
 
+    protected static ?string $navigationLabel = 'Estoque Financeiro';
+
+    protected static ?string $title = 'Estoque Financeiro';
+
     public function mount() {
         
         $allEstoque = Produto::all();

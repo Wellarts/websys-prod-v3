@@ -33,21 +33,14 @@ class LucratividadePDV extends Page implements HasTable
     {
 
         $vendas = VendaPDV::all();
-
+      
         foreach ($vendas as $venda) {
-          //  dd($venda);
-            $itensVenda = PDV::where('venda_p_d_v_id', $venda->id)->get();
-           // dd($itensVenda);
-            foreach ($itensVenda as $itens) {
-                $custo_venda = +$itens->total_custo_atual;
-               //  dd($itens->total_custo_atual);
-
-            }
-
-            $venda->lucro_venda = ($venda->valor_total - $custo_venda);
-            $venda->save();
+                $custo_venda = $venda->itensVenda()->sum('total_custo_atual');
+                $venda->lucro_venda = ($venda->valor_total - $custo_venda);
+                $venda->save();
+                
         }
-    }
+    } 
 
     public function table(Table $table): Table
     {

@@ -23,11 +23,11 @@ class VendaPDVResource extends Resource
 {
     protected static ?string $model = VendaPDV::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-shopping-cart';
 
     protected static ?string $navigationGroup = 'Ponto de Venda';
 
-    protected static ?string $navigationLabel = 'Vendas  PDV';
+    protected static ?string $navigationLabel = 'Vendas em PDV';
 
     protected static ?string $title = 'Vendas PDV';
 
@@ -55,7 +55,7 @@ class VendaPDVResource extends Resource
                         ->searchable()
                         ->options(Funcionario::all()->pluck('nome', 'id')->toArray())
                         ->required(),
-                    Forms\Components\Select::make('formaPgmto_id')
+                    Forms\Components\Select::make('forma_pgmto_id')
                         ->label('Forma de Pagamento')
                         ->native(false)
                         ->searchable()
@@ -102,7 +102,10 @@ class VendaPDVResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                  ->modalHeading('Vendas PDV'),
+                    ->modalHeading('Vendas PDV'),
+                 Tables\Actions\Action::make('Imprimir')
+                    ->url(fn (VendaPDV $record): string => route('comprovantePDV', $record))
+                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
