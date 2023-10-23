@@ -106,7 +106,7 @@ class ItensVendaRelationManager extends RelationManager
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('qtd')
-                    ->summarize(Count::make()->label('Qtd de Produtos')),
+                    ->summarize(Sum::make()->label('Qtd de Produtos')),
                 Tables\Columns\TextColumn::make('valor_venda')
                     ->money('BRL'),
                 Tables\Columns\TextColumn::make('acres_desc')

@@ -30,7 +30,7 @@ class ProdutoFornecedorRelationManager extends RelationManager
             ->recordTitleAttribute('produto_id')
             ->columns([
                 Tables\Columns\TextColumn::make('compra_id')
-                ->label('Venda'),
+                ->label('Compra'),
                 Tables\Columns\TextColumn::make('compra.fornecedor.nome'),
                 Tables\Columns\TextColumn::make('compra.data_compra')
                 ->date('d/m/y'),
