@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Cliente;
 use App\Models\ContasReceber;
+use App\Models\Estado;
 use App\Models\FluxoCaixa;
 use App\Models\FormaPgmto;
 use App\Models\Funcionario;
@@ -32,8 +33,10 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Support\RawJs;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\Summarizers\Count;
 
@@ -53,6 +56,7 @@ class PDV extends  page implements HasForms, HasTable
     public ?array $data = [];
 
     public $produto_id;
+    public $produto_nome;
     public $qtd;
     public $pdv;
     public $venda;
@@ -79,9 +83,16 @@ class PDV extends  page implements HasForms, HasTable
                             ->extraInputAttributes(['tabindex' => 1])
                             ->live(debounce: 300)
                             ->afterStateUpdated(function ($state, Get $get, Set $set) {
-
+                              //  dd($get('produto_id'));
+                              //  $produto = Produto::where('codbar','=', $state)->first();
+                                                             
+                              //  $set('produto_nome', $produto->nome);
                                 $this->updated($state, $state);
                             }),
+                     //   TextInput::make('produto_nome')
+                            
+                           
+                            
 
                     ]),
             ]);
@@ -112,6 +123,7 @@ class PDV extends  page implements HasForms, HasTable
                 PDVs::create($addProduto);
                 $this->produto_id = '';
                 $this->qtd = '';
+                $this->produto_nome = '';
             } elseif ($produto == null) {
                 Notification::make()
                     ->title('Produto não cadastrado')
@@ -119,7 +131,7 @@ class PDV extends  page implements HasForms, HasTable
                     ->send();
             }
         }
-    }
+    } 
 
     protected function getTableQuery(): Builder
     {
@@ -163,12 +175,12 @@ class PDV extends  page implements HasForms, HasTable
     {
         return [
             CreateAction::make()
-                ->label('Finalizar Venda (F7)')
+                ->label('Finalizar Venda')
                 ->modalHeading('Finalizar Venda - PDV')
                 ->model(VendaPDV::class)
                 ->createAnother(false)
                 ->successNotificationTitle('Venda em PDV finalizada com sucesso!')
-                ->keyBindings(['keypress', 'f7'])
+               // ->keyBindings(['keypress', 'f7'])
                // ->keyBindings(['command+s', 'ctrl+s'])
                 ->form([
                     Grid::make('4')
@@ -180,7 +192,70 @@ class PDV extends  page implements HasForms, HasTable
                             Select::make('cliente_id')
                                 ->label('Cliente')
                                 ->default('1')
-                                ->options(Cliente::all()->pluck('nome', 'id')->toArray()),
+                              //  ->options(Cliente::all()->pluck('nome', 'id')->toArray())
+                                ->relationship(name: 'cliente', titleAttribute: 'nome')
+                                ->createOptionForm([
+                                    Grid::make([
+                                        'xl' => 4,
+                                        '2xl' => 4,
+                                    ])
+                                        ->schema([
+                                            TextInput::make('nome')
+                                            ->columnSpan([
+                                                'xl' => 2,
+                                                '2xl' => 2,
+                                            ])
+                                                ->required()
+                                                ->maxLength(255),
+                                            TextInput::make('cpf_cnpj')
+                                                ->label('CPF/CNPJ')
+                                                ->mask(RawJs::make(<<<'JS'
+                                                        $input.length > 14 ? '99.999.999/9999-99' : '999.999.999-99'
+                                                    JS))
+                                                ->rule('cpf_ou_cnpj'),
+                                                
+                                            TextInput::make('telefone')
+                                                ->minLength(11)
+                                                ->maxLength(11)
+                                                ->mask('(99)99999-9999')
+                                                ->tel()
+                                                ->maxLength(255),
+                                            Textarea::make('endereco')
+                                                ->columnSpan([
+                                                    'xl' => 2,
+                                                    '2xl' => 2,
+                                                ])
+                                                ->label('Endereço'),
+                                            Select::make('estado_id')
+                                                ->label('Estado')
+                                                ->native(false)
+                                                ->searchable()
+                                                ->required()
+                                                ->options(Estado::all()->pluck('nome', 'id')->toArray())
+                                                ->reactive(),
+                                            Select::make('cidade_id')
+                                                ->label('Cidade')
+                                                ->native(false)
+                                                ->searchable()
+                                                ->required()
+                                                ->options(function (callable $get) {
+                                                    $estado = Estado::find($get('estado_id'));
+                                                    if (!$estado) {
+                                                        return Estado::all()->pluck('nome', 'id');
+                                                    }
+                                                    return $estado->cidade->pluck('nome', 'id');
+                                                })
+                                                ->reactive(),
+                                            
+                                            TextInput::make('email')
+                                                ->columnSpan([
+                                                    'xl' => 2,
+                                                    '2xl' => 2,
+                                                ])
+                                                ->email()
+                                                ->maxLength(255),
+                                        ])
+                                ]),
                             Select::make('funcionario_id')
                                 ->label('Vendedor')
                                 ->default('1')
@@ -204,14 +279,15 @@ class PDV extends  page implements HasForms, HasTable
                             TextInput::make('valor_pago')
                                 ->label('Valor Pago')
                                 ->autofocus()
-                                ->extraInputAttributes(['tabindex' => 1])
-                                ->live(onBlur: true)
+                                ->extraInputAttributes(['tabindex' => 1, 'style' => 'font-weight: bolder; font-size: 2rem; color: #32CD32;'])
+                                ->live(debounce: 300)
                                 ->afterStateUpdated(function (Set $set, $state, $get) {
                                     $set('troco', ($state - $get('valor_total')));
                                 })
                                 ->autofocus(),
                             TextInput::make('troco')
-                                ->disabled()
+                                ->extraInputAttributes(['style' => 'font-weight: bolder; font-size: 2rem; color: #1E90FF;'])
+                                ->readOnly()
                                 ->inputMode('decimal')
                                 ->label('Troco'),
                             Radio::make('financeiro')
