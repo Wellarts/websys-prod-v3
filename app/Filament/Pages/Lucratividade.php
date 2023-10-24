@@ -75,7 +75,7 @@ class Lucratividade extends Page implements HasTable
                     ->money('BRL')
                     ->color('warning'),
                 TextColumn::make('lucro_venda')
-                    ->summarize(Sum::make()->label('Total'))
+                    ->summarize(Sum::make()->money('BRL')->label('Total'))
                     ->badge()
                     ->alignCenter()
                     ->label('Lucro por Venda')

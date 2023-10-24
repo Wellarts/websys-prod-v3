@@ -6,6 +6,7 @@ use App\Filament\Resources\ContasReceberResource\Pages;
 use App\Filament\Resources\ContasReceberResource\RelationManagers;
 use App\Models\Cliente;
 use App\Models\ContasReceber;
+use App\Models\FluxoCaixa;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
@@ -183,7 +184,20 @@ class ContasReceberResource extends Resource
                     })
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->after(function ($data, $record) {
+
+                    if($record->status = 1)
+                    {
+                        $addFluxoCaixa = [
+                            'valor' => ($record->valor_parcela),
+                            'tipo'  => 'CREDITO',
+                            'obs'   => 'Recebido da venda nº: '.$record->venda_id. '',
+                        ];
+
+                        FluxoCaixa::create($addFluxoCaixa);
+                    }
+                }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
