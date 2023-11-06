@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Forms\Components\CpfCnpj;
 use Filament\Forms\Components\Grid;
 use Filament\Support\RawJs;
+use Filament\Tables\Actions\Action;
 
 class ClienteResource extends Resource
 {
@@ -128,6 +129,8 @@ class ClienteResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+               
+                
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -138,6 +141,8 @@ class ClienteResource extends Resource
     {
         return [
             'index' => Pages\ManageClientes::route('/'),
+           
+           
         ];
     }
 }

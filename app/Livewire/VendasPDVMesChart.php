@@ -24,7 +24,7 @@ class VendasPDVMesChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Vendas Mensal',
+                    'label' => 'Vendas Mensal - PDV',
                     'data' => $data->map(fn (TrendValue $value) => $value->aggregate),
                 ],
             ],

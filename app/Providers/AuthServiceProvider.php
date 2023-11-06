@@ -27,6 +27,8 @@ use App\Policies\VendaPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+//use App\Policies\ActivityPolicy;
+//use Spatie\Activitylog\Models\Activity;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -49,6 +51,7 @@ class AuthServiceProvider extends ServiceProvider
         Role::class => RolePolicy::class,
         User::class => UserPolicy::class,
         Venda::class => VendaPolicy::class,
+        //Activity::class => ActivityPolicy::class,
     ];
 
     /**

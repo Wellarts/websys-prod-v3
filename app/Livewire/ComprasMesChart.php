@@ -26,7 +26,7 @@ class ComprasMesChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Vendas Mensal',
+                    'label' => 'Compras Mensal',
                     'data' => $data->map(fn (TrendValue $value) => $value->aggregate),
                 ],
             ],
