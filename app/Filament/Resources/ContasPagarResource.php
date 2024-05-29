@@ -15,6 +15,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -57,7 +58,7 @@ class ContasPagarResource extends Resource
                         ->required()
                         ->readOnly()
                         ->maxLength(255),
-                    
+
                     Forms\Components\DatePicker::make('data_vencimento')
                         ->label('Data do Vencimento')
                         ->displayFormat('d/m/Y')
@@ -66,14 +67,17 @@ class ContasPagarResource extends Resource
                         ->label('Data do Pagamento')
                         ->displayFormat('d/m/Y'),
                     Forms\Components\TextInput::make('valor_total')
+                        ->numeric()
                         ->label('Valor Total')
                         ->readOnly()
                         ->required(),
                     Forms\Components\TextInput::make('valor_parcela')
+                        ->numeric()
                         ->label('Valor da Parcela')
                         ->readOnly()
                         ->required(),
                     Forms\Components\TextInput::make('valor_pago')
+                        ->numeric()
                         ->label('Valor Pago'),
                     Forms\Components\Textarea::make('obs')
                         ->columnSpan([
@@ -97,18 +101,18 @@ class ContasPagarResource extends Resource
                                          {
                                              $set('valor_pago', $get('valor_parcela'));
                                              $set('data_pagamento', Carbon::now()->format('Y-m-d'));
-            
+
                                          }
                                      else
                                          {
-            
+
                                              $set('valor_pago', 0);
                                              $set('data_pagamento', null);
                                          }
                                      }
                          ),
-                   
-            
+
+
         ]);
     }
 
@@ -127,19 +131,20 @@ class ContasPagarResource extends Resource
                     ->badge()
                     ->color('warning')
                     ->label('Valor Total')
-                    ->money('BRL'),  
+                    ->money('BRL'),
                 Tables\Columns\TextColumn::make('data_vencimento')
                     ->label('Data do Vencimento')
                     ->badge()
                     ->color('danger')
                     ->sortable()
                     ->date(),
-                              
+
                 Tables\Columns\TextColumn::make('valor_parcela')
+                    ->summarize(Sum::make()->money('BRL')->label('Total Parcelas'))
                     ->badge()
                     ->color('danger')
                     ->label('Valor da Parcela')
-                    ->money('BRL'),      
+                    ->money('BRL'),
                 Tables\Columns\IconColumn::make('status')
                     ->alignCenter()
                     ->label('Pago')
@@ -148,8 +153,9 @@ class ContasPagarResource extends Resource
                     ->label('Data do Pagamento')
                     ->badge()
                     ->color('success')
-                    ->date(),    
+                    ->date(),
                 Tables\Columns\TextColumn::make('valor_pago')
+                    ->summarize(Sum::make()->money('BRL')->label('Total Pago'))
                     ->badge()
                     ->color('success')
                     ->label('Valor Pago'),
@@ -204,11 +210,11 @@ class ContasPagarResource extends Resource
                 ]),
             ]);
     }
-    
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ManageContasPagars::route('/'),
         ];
-    }    
+    }
 }

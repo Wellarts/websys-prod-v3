@@ -12,6 +12,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -40,20 +41,20 @@ class ContasReceberRelationManager extends RelationManager
                         ->default((function ($livewire): int {
                             return $livewire->ownerRecord->cliente_id;
                         }))
-                        
+
                         ->options(function (RelationManager $livewire): array {
                             return $livewire->ownerRecord
                                 ->cliente()
                                 ->pluck('nome', 'id')
                                 ->toArray();
-                        }) 
+                        })
                         ->required(),
                     Forms\Components\TextInput::make('ordem_parcela')
                         ->label('Parcela Nº')
                         ->readOnly()
                         ->default('1')
                         ->required(),
-                   
+
                     Forms\Components\TextInput::make('parcelas')
                         ->default('1')
                         ->reactive()
@@ -72,31 +73,33 @@ class ContasReceberRelationManager extends RelationManager
                                     $set('status', 1);
                                     $set('valor_recebido', $get('valor_total'));
                                     $set('data_pagamento', Carbon::now()->format('Y-m-d'));
-                                    $set('data_vencimento',  Carbon::now()->format('Y-m-d'));  
-                                }    
-              
+                                    $set('data_vencimento',  Carbon::now()->format('Y-m-d'));
+                                }
+
                         })
                         ->required(),
                     Forms\Components\DatePicker::make('data_pagamento')
                         ->default(now())
                         ->displayFormat('d/m/Y')
                         ->label("Data do Pagamento"),
-                   
+
                     Forms\Components\DatePicker::make('data_vencimento')
                          ->default(now())
                          ->label("Data do Vencimento")
                          ->displayFormat('d/m/Y')
                         ->required(),
                     Forms\Components\TextInput::make('valor_total')
+                        ->numeric()
                         ->label('Valor Total')
                         ->default((function ($livewire): float {
                         return $livewire->ownerRecord->valor_total;
                     }))
                         ->readOnly()
                         ->required(),
-                    
-                   
+
+
                     Forms\Components\TextInput::make('valor_parcela')
+                        ->numeric()
                         ->label('Valor da Parcela')
                         ->default((function ($livewire): float {
                                 return $livewire->ownerRecord->valor_total;
@@ -104,6 +107,7 @@ class ContasReceberRelationManager extends RelationManager
                         ->required()
                         ->readOnly(),
                     Forms\Components\TextInput::make('valor_recebido')
+                        ->numeric()
                         ->default((function ($livewire): float {
                                 return $livewire->ownerRecord->valor_total;
                         })),
@@ -124,19 +128,19 @@ class ContasReceberRelationManager extends RelationManager
                                          {
                                              $set('valor_recebido', $get('valor_parcela'));
                                              $set('data_pagamento', Carbon::now()->format('Y-m-d'));
-            
+
                                          }
                                      else
                                          {
-                                             
+
                                              $set('valor_recebido', 0);
                                              $set('data_pagamento', null);
-                                         } 
-                                     }      
+                                         }
+                                     }
                          ),
                     ])
-       
-            
+
+
         ]);
     }
 
@@ -155,19 +159,20 @@ class ContasReceberRelationManager extends RelationManager
                     ->badge()
                     ->color('warning')
                     ->label('Valor Total')
-                    ->money('BRL'),  
+                    ->money('BRL'),
                 Tables\Columns\TextColumn::make('data_vencimento')
                     ->label('Data do Vencimento')
                     ->badge()
                     ->color('danger')
                     ->sortable()
                     ->date(),
-                              
+
                 Tables\Columns\TextColumn::make('valor_parcela')
+                    ->summarize(Sum::make()->money('BRL')->label('Total Parcelas'))
                     ->badge()
                     ->color('danger')
                     ->label('Valor da Parcela')
-                    ->money('BRL'),      
+                    ->money('BRL'),
                 Tables\Columns\IconColumn::make('status')
                     ->alignCenter()
                     ->label('Recebido')
@@ -176,8 +181,9 @@ class ContasReceberRelationManager extends RelationManager
                     ->label('Data do Recebimento')
                     ->badge()
                     ->color('success')
-                    ->date(),    
-                Tables\Columns\TextColumn::make('valor_pago')
+                    ->date(),
+                Tables\Columns\TextColumn::make('valor_recebido')
+                    ->summarize(Sum::make()->money('BRL')->label('Total Pago'))
                     ->label('Recebido')
                     ->badge()
                     ->color('success')
@@ -192,7 +198,7 @@ class ContasReceberRelationManager extends RelationManager
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                
+
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
@@ -247,9 +253,9 @@ class ContasReceberRelationManager extends RelationManager
                             'obs'   => 'Recebido da venda nº: '.$record->venda_id. '',
                         ];
 
-                        FluxoCaixa::create($addFluxoCaixa); 
+                        FluxoCaixa::create($addFluxoCaixa);
                     }
-                    
+
                 }),
                 Tables\Actions\DeleteAction::make(),
             ])

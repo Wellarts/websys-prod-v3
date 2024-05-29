@@ -45,7 +45,7 @@ class ItensVendaRelationManager extends RelationManager
                         'xl' => 2,
                         '2xl' => 2,
                     ])
-                    ->reactive()
+                    ->live(debounce:200)
                     ->required()
                     ->label('Produto')
                     ->afterStateUpdated(
@@ -77,9 +77,11 @@ class ItensVendaRelationManager extends RelationManager
                         }
                     ),
                 Forms\Components\TextInput::make('valor_venda')
+                    ->numeric()
                     ->required()
                     ->readOnly(),
                 Forms\Components\TextInput::make('acres_desc')
+                    ->numeric()
                     ->label('Desconto/Acréscimo')
                     ->reactive()
                     ->afterStateUpdated(function (Get $get, Set $set, $state) {
@@ -87,13 +89,14 @@ class ItensVendaRelationManager extends RelationManager
                         $set('total_custo_atual',($get('total_custo_atual' + (float)$state)));
                     }),
                 Forms\Components\TextInput::make('sub_total')
+                    ->numeric()
                     ->readOnly()
                     ->label('SubTotal'),
                 Forms\Components\Hidden::make('valor_custo_atual'),
                 Forms\Components\Hidden::make('total_custo_atual'),
 
                     ])
-                
+
             ]);
     }
 
@@ -133,7 +136,7 @@ class ItensVendaRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->before(function ($data) {
+                ->mutateFormDataUsing(function ($data) {
 
                         $produto = Produto::find($data['produto_id']);
                         $idItemCompra = ItensVenda::find($data['id']);
@@ -142,9 +145,10 @@ class ItensVendaRelationManager extends RelationManager
                         $venda->valor_total += ($data['sub_total'] - $idItemCompra->sub_total);
                         $venda->save();
                         $produto->save();
+                        return $data;
                     }),
                 Tables\Actions\DeleteAction::make()
-                    ->before(function ($data, $record) {
+                    ->after(function ($data, $record) {
                         $produto = Produto::find($record->produto_id);
                         $venda = Venda::find($record->venda_id);
                         $venda->valor_total -= $record->sub_total;

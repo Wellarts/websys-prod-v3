@@ -28,9 +28,10 @@ class PDVRelationManager extends RelationManager
                 Forms\Components\TextInput::make('qtd')
                     ->required(),
                 Forms\Components\TextInput::make('sub_total')
+                    ->numeric()
                     ->required()
-                   
-            
+
+
             ]);
     }
 

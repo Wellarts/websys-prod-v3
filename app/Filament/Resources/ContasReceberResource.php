@@ -15,6 +15,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -37,78 +38,77 @@ class ContasReceberResource extends Resource
             ->schema([
                 Grid::make('4')
                     ->schema([
-            Forms\Components\Select::make('cliente_id')
-                ->columnSpan([
-                    'xl' => 2,
-                    '2xl' => 2,
-                ])
-                ->label('Cliente')
-                ->options(Cliente::all()->pluck('nome', 'id')->toArray())
-                ->required()
-                ->disabled(),
-            Forms\Components\TextInput::make('ordem_parcela')
-                ->label('Parcela Nº')
-                ->readOnly()
-                ->maxLength(10),
-            Forms\Components\TextInput::make('venda_id')
-                ->hidden()
-                ->required(),
-            Forms\Components\TextInput::make('parcelas')
-                ->required()
-                ->readOnly()
-                ->maxLength(255),
-           
-            Forms\Components\DatePicker::make('data_vencimento')
-                ->label('Data do Vencimento')
-                ->displayFormat('d/m/Y')
-                ->required(),
-            
-            Forms\Components\DatePicker::make('data_pagamento')
-                ->label('Data do Recebimento')
-                ->displayFormat('d/m/Y'),
-                Forms\Components\TextInput::make('valor_total')
-                ->label('Valor Total')
-                ->readOnly()
-                ->required(),
-                Forms\Components\TextInput::make('valor_parcela')
-                ->label('Valor da Parcela')
-                ->readOnly()
-                ->required(),
-            Forms\Components\TextInput::make('valor_recebido')
-                ->label('Valor Recebido'),
-            Forms\Components\Textarea::make('obs')
-                ->columnSpan([
-                    'xl' => 3,
-                    '2xl' => 3,
-                ])
-                ->label('Observações'),
-            Forms\Components\Toggle::make('status')
-            ->default('true')
-            ->label('Recebido')
-            ->required()
-            ->live()
-            ->afterStateUpdated(function (Get $get, Set $set) {
-                         if($get('status') == 1)
-                             {
-                                 $set('valor_recebido', $get('valor_parcela'));
-                                 $set('data_pagamento', Carbon::now()->format('Y-m-d'));
+                        Forms\Components\Select::make('cliente_id')
+                            ->columnSpan([
+                                'xl' => 2,
+                                '2xl' => 2,
+                            ])
+                            ->label('Cliente')
+                            ->options(Cliente::all()->pluck('nome', 'id')->toArray())
+                            ->required()
+                            ->disabled(),
+                        Forms\Components\TextInput::make('ordem_parcela')
+                            ->label('Parcela Nº')
+                            ->readOnly()
+                            ->maxLength(10),
+                        Forms\Components\TextInput::make('venda_id')
+                            ->hidden()
+                            ->required(),
+                        Forms\Components\TextInput::make('parcelas')
+                            ->required()
+                            ->readOnly()
+                            ->maxLength(255),
 
-                             }
-                         else
-                             {
+                        Forms\Components\DatePicker::make('data_vencimento')
+                            ->label('Data do Vencimento')
+                            ->displayFormat('d/m/Y')
+                            ->required(),
 
-                                 $set('valor_recebido', 0);
-                                 $set('data_pagamento', null);
-                             }
-                         }
-             ),
+                        Forms\Components\DatePicker::make('data_pagamento')
+                            ->label('Data do Recebimento')
+                            ->displayFormat('d/m/Y'),
+                        Forms\Components\TextInput::make('valor_total')
+                            ->numeric()
+                            ->label('Valor Total')
+                            ->readOnly()
+                            ->required(),
+                        Forms\Components\TextInput::make('valor_parcela')
+                            ->numeric()
+                            ->label('Valor da Parcela')
+                            ->readOnly()
+                            ->required(),
+                        Forms\Components\TextInput::make('valor_recebido')
+                            ->numeric()
+                            ->label('Valor Recebido'),
+                        Forms\Components\Textarea::make('obs')
+                            ->columnSpan([
+                                'xl' => 3,
+                                '2xl' => 3,
+                            ])
+                            ->label('Observações'),
+                        Forms\Components\Toggle::make('status')
+                            ->default('true')
+                            ->label('Recebido')
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(
+                                function (Get $get, Set $set) {
+                                    if ($get('status') == 1) {
+                                        $set('valor_recebido', $get('valor_parcela'));
+                                        $set('data_pagamento', Carbon::now()->format('Y-m-d'));
+                                    } else {
 
-           
-            
+                                        $set('valor_recebido', 0);
+                                        $set('data_pagamento', null);
+                                    }
+                                }
+                            ),
+
+
+
                     ])
-            
-        ]);
-            
+
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -125,7 +125,7 @@ class ContasReceberResource extends Resource
                     ->badge()
                     ->color('warning')
                     ->label('Valor Total')
-                    ->money('BRL'),  
+                    ->money('BRL'),
                 Tables\Columns\TextColumn::make('data_vencimento')
                     ->alignCenter()
                     ->label('Data do Vencimento')
@@ -133,13 +133,14 @@ class ContasReceberResource extends Resource
                     ->color('danger')
                     ->sortable()
                     ->date(),
-                              
+
                 Tables\Columns\TextColumn::make('valor_parcela')
+                    ->summarize(Sum::make()->money('BRL')->label('Total Parcelas'))
                     ->alignCenter()
                     ->badge()
                     ->color('danger')
                     ->label('Valor da Parcela')
-                    ->money('BRL'),      
+                    ->money('BRL'),
                 Tables\Columns\IconColumn::make('status')
                     ->alignCenter()
                     ->label('Recebido')
@@ -149,13 +150,14 @@ class ContasReceberResource extends Resource
                     ->label('Data do Recebimento')
                     ->badge()
                     ->color('success')
-                    ->date(),    
+                    ->date(),
                 Tables\Columns\TextColumn::make('valor_recebido')
+                    ->summarize(Sum::make()->money('BRL')->label('Total Recebido'))
                     ->alignCenter()
                     ->label('Valor Recebido')
                     ->badge()
                     ->color('success'),
-             Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -166,9 +168,9 @@ class ContasReceberResource extends Resource
             ])
             ->filters([
                 Filter::make('Aberta')
-                ->query(fn (Builder $query): Builder => $query->where('status', false)),
-                 SelectFilter::make('cliente')->relationship('cliente', 'nome'),
-                 Tables\Filters\Filter::make('data_vencimento')
+                    ->query(fn (Builder $query): Builder => $query->where('status', false)),
+                SelectFilter::make('cliente')->relationship('cliente', 'nome'),
+                Tables\Filters\Filter::make('data_vencimento')
                     ->form([
                         Forms\Components\DatePicker::make('vencimento_de')
                             ->label('Vencimento de:'),
@@ -177,27 +179,30 @@ class ContasReceberResource extends Resource
                     ])
                     ->query(function ($query, array $data) {
                         return $query
-                            ->when($data['vencimento_de'],
-                                fn($query) => $query->whereDate('data_vencimento', '>=', $data['vencimento_de']))
-                            ->when($data['vencimento_ate'],
-                                fn($query) => $query->whereDate('data_vencimento', '<=', $data['vencimento_ate']));
+                            ->when(
+                                $data['vencimento_de'],
+                                fn ($query) => $query->whereDate('data_vencimento', '>=', $data['vencimento_de'])
+                            )
+                            ->when(
+                                $data['vencimento_ate'],
+                                fn ($query) => $query->whereDate('data_vencimento', '<=', $data['vencimento_ate'])
+                            );
                     })
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->after(function ($data, $record) {
+                    ->after(function ($data, $record) {
 
-                    if($record->status = 1)
-                    {
-                        $addFluxoCaixa = [
-                            'valor' => ($record->valor_parcela),
-                            'tipo'  => 'CREDITO',
-                            'obs'   => 'Recebido da venda nº: '.$record->venda_id. '',
-                        ];
+                        if ($record->status = 1) {
+                            $addFluxoCaixa = [
+                                'valor' => ($record->valor_parcela),
+                                'tipo'  => 'CREDITO',
+                                'obs'   => 'Recebido da venda nº: ' . $record->venda_id . '',
+                            ];
 
-                        FluxoCaixa::create($addFluxoCaixa);
-                    }
-                }),
+                            FluxoCaixa::create($addFluxoCaixa);
+                        }
+                    }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
@@ -206,11 +211,11 @@ class ContasReceberResource extends Resource
                 ]),
             ]);
     }
-    
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ManageContasRecebers::route('/'),
         ];
-    }    
+    }
 }

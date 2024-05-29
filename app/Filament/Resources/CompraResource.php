@@ -47,7 +47,7 @@ class CompraResource extends Resource
                         Forms\Components\Textarea::make('obs')
                             ->label('Observações'),
                         ])->columns(2)
-            ]);        
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -77,12 +77,13 @@ class CompraResource extends Resource
             ])
             ->actions([
                Tables\Actions\EditAction::make(),
+
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
@@ -90,7 +91,7 @@ class CompraResource extends Resource
             ContasPagarRelationManager::class
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -98,5 +99,5 @@ class CompraResource extends Resource
             'create' => Pages\CreateCompra::route('/create'),
             'edit' => Pages\EditCompra::route('/{record}/edit'),
         ];
-    }    
+    }
 }

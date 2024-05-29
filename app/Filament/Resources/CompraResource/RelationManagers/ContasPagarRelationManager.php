@@ -12,6 +12,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -83,6 +84,7 @@ class ContasPagarRelationManager extends RelationManager
                             ->default(now())
                             ->label("Data do Pagamento"),
                         Forms\Components\TextInput::make('valor_total')
+                            ->numeric()
                             ->label('Valor Total')
                             ->default((function ($livewire): float {
                                 return $livewire->ownerRecord->valor_total;
@@ -91,6 +93,7 @@ class ContasPagarRelationManager extends RelationManager
                             ->required(),
 
                         Forms\Components\TextInput::make('valor_parcela')
+                            ->numeric()
                             ->label('Valor da Parcela ')
                             ->default((function ($livewire): float {
                                 return $livewire->ownerRecord->valor_total;
@@ -98,6 +101,7 @@ class ContasPagarRelationManager extends RelationManager
                             ->required()
                             ->readOnly(),
                         Forms\Components\TextInput::make('valor_pago')
+                            ->numeric()
                             ->label('Valor Pago')
                             ->default((function ($livewire): float {
                                 return $livewire->ownerRecord->valor_total;
@@ -158,6 +162,7 @@ class ContasPagarRelationManager extends RelationManager
                     ->date(),
 
                 Tables\Columns\TextColumn::make('valor_parcela')
+                    ->summarize(Sum::make()->money('BRL')->label('Total Parcelas'))
                     ->badge()
                     ->color('danger')
                     ->label('Valor da Parcela')
@@ -172,6 +177,7 @@ class ContasPagarRelationManager extends RelationManager
                     ->color('success')
                     ->date(),
                 Tables\Columns\TextColumn::make('valor_pago')
+                    ->summarize(Sum::make()->money('BRL')->label('Total Pago'))
                     ->badge()
                     ->color('success')
                     ->label('Valor Pago'),
