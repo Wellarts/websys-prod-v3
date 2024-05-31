@@ -69,7 +69,7 @@ class ItensVendaRelationManager extends RelationManager
                 Forms\Components\TextInput::make('qtd')
                     ->default('1')
                     ->required()
-                    ->reactive()
+                    ->live(debounce: 500)
                     ->afterStateUpdated(
                         function ($state, callable $set, Get $get,) {
                             $set('sub_total', (((float)$get('qtd') * (float)$get('valor_venda')) + (float)$get('acres_desc')));
@@ -77,13 +77,14 @@ class ItensVendaRelationManager extends RelationManager
                         }
                     ),
                 Forms\Components\TextInput::make('valor_venda')
+                    ->label('Valor Venda')
                     ->numeric()
                     ->required()
                     ->readOnly(),
                 Forms\Components\TextInput::make('acres_desc')
                     ->numeric()
                     ->label('Desconto/Acréscimo')
-                    ->reactive()
+                    ->live(debounce: 500)
                     ->afterStateUpdated(function (Get $get, Set $set, $state) {
                         $set('sub_total', (((float)$get('qtd') * (float)$get('valor_venda')) + (float)$get('acres_desc')));
                         $set('total_custo_atual',($get('total_custo_atual' + (float)$state)));

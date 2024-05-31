@@ -245,7 +245,7 @@ class PDV extends  page implements HasForms, HasTable
                                                 ->searchable()
                                                 ->required()
                                                 ->options(Estado::all()->pluck('nome', 'id')->toArray())
-                                                ->reactive(),
+                                                ->live(debounce: 500),
                                             Select::make('cidade_id')
                                                 ->label('Cidade')
                                                 ->native(false)
@@ -258,7 +258,7 @@ class PDV extends  page implements HasForms, HasTable
                                                     }
                                                     return $estado->cidade->pluck('nome', 'id');
                                                 })
-                                                ->reactive(),
+                                                ->live(debounce: 500),
 
                                             TextInput::make('email')
                                                 ->columnSpan([

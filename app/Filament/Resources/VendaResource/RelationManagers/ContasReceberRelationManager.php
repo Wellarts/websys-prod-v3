@@ -57,7 +57,7 @@ class ContasReceberRelationManager extends RelationManager
 
                     Forms\Components\TextInput::make('parcelas')
                         ->default('1')
-                        ->reactive()
+                        ->live(debounce: 500)
                         ->afterStateUpdated(function (Get $get, Set $set) {
                             if($get('parcelas') != 1)
                                {
@@ -121,7 +121,7 @@ class ContasReceberRelationManager extends RelationManager
                         ->default('true')
                         ->label('Recebido')
                         ->required()
-                        ->reactive()
+                        ->live(debounce: 500)
                        // ->hidden(fn (Get $get): bool => $get('parcelas') != '1')
                         ->afterStateUpdated(function (Get $get, Set $set) {
                                      if($get('status') == 1)
