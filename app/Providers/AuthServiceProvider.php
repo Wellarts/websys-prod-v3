@@ -4,6 +4,7 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 
+use App\Models\Cliente;
 use App\Models\Compra;
 use App\Models\contasPagar;
 use App\Models\ContasReceber;
@@ -11,7 +12,11 @@ use App\Models\FluxoCaixa;
 use App\Models\FormaPgmto;
 use App\Models\Fornecedor;
 use App\Models\Funcionario;
+use App\Models\PDV;
+use App\Models\Produto;
 use App\Models\User;
+use App\Models\Venda;
+use App\Models\VendaPDV;
 use App\Policies\ClientePolicy;
 use App\Policies\CompraPolicy;
 use App\Policies\ContasPagarPolicy;
@@ -19,11 +24,14 @@ use App\Policies\ContasReceberPolicy;
 use App\Policies\FluxoCaixaPolicy;
 use App\Policies\FornecedorPolicy;
 use App\Policies\FuncionarioPolicy;
+use App\Policies\PDVPolicy;
 use App\Policies\PermissionPolicy;
 use App\Policies\PgmtoPolicy;
+use App\Policies\ProdutoPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
 use App\Policies\VendaPolicy;
+use App\Policies\VendasPDVPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -51,6 +59,8 @@ class AuthServiceProvider extends ServiceProvider
         Role::class => RolePolicy::class,
         User::class => UserPolicy::class,
         Venda::class => VendaPolicy::class,
+        PDV::class => PDVPolicy::class,
+        VendaPDV::class => VendasPDVPolicy::class,
         //Activity::class => ActivityPolicy::class,
     ];
 

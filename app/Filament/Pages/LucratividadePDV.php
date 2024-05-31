@@ -28,19 +28,31 @@ class LucratividadePDV extends Page implements HasTable
 
     protected static ?string $title = 'Lucratividade PDV';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+         /** @var \App\Models\User */
+         $authUser =  auth()->user();
+
+         if ($authUser->hasRole('TI')) {
+             return true;
+         } else {
+             return false;
+         }
+    }
+
 
     public function mount()
     {
 
         $vendas = VendaPDV::all();
-      
+
         foreach ($vendas as $venda) {
                 $custo_venda = $venda->itensVenda()->sum('total_custo_atual');
                 $venda->lucro_venda = ($venda->valor_total - $custo_venda);
                 $venda->save();
-                
+
         }
-    } 
+    }
 
     public function table(Table $table): Table
     {

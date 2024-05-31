@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class VendaPDV extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'id',
@@ -42,7 +43,7 @@ class VendaPDV extends Model
     {
         return $this->hasMany(PDV::class);
     }
-    
+
     public function contasReceber()
     {
         return $this->hasMany(ContasReceber::class);
