@@ -87,14 +87,16 @@ class ItensVendaRelationManager extends RelationManager
                     ->live(debounce: 500)
                     ->afterStateUpdated(function (Get $get, Set $set, $state) {
                         $set('sub_total', (((float)$get('qtd') * (float)$get('valor_venda')) + (float)$get('acres_desc')));
-                        $set('total_custo_atual',($get('total_custo_atual' + (float)$state)));
+                       // $set('total_custo_atual',((float)$get('total_custo_atual') + (float)$state));
                     }),
                 Forms\Components\TextInput::make('sub_total')
                     ->numeric()
                     ->readOnly()
                     ->label('SubTotal'),
                 Forms\Components\Hidden::make('valor_custo_atual'),
+                  
                 Forms\Components\Hidden::make('total_custo_atual'),
+                   
 
                     ])
 
