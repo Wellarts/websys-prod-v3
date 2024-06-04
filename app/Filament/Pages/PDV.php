@@ -173,7 +173,7 @@ class PDV extends  page implements HasForms, HasTable
             TextInputColumn::make('acres_desc')
                 ->label('Acréscimo/Desconto')
                 ->updateStateUsing(function (Model $record, $state) {
-                    $record->sub_total = (($record->valor_venda + $state) * $record->qtd);
+                    $record->sub_total = (((float)$record->valor_venda + (float)$state) * $record->qtd);
                     $record->acres_desc = $state;
                     $record->save();
                 })
