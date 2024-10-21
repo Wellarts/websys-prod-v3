@@ -58,6 +58,7 @@ class FluxoCaixaResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('id','desc')
             ->columns([
                 Tables\Columns\TextColumn::make('tipo')
                     ->badge()

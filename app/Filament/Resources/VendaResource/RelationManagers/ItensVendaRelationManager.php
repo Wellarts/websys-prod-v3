@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\VendaResource\RelationManagers;
 
+use App\Models\FluxoCaixa;
 use App\Models\ItensVenda;
 use App\Models\Produto;
 use App\Models\Venda;
@@ -10,6 +11,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Columns\Summarizers\Count;
@@ -32,71 +34,71 @@ class ItensVendaRelationManager extends RelationManager
                     ->schema([
                         Forms\Components\Hidden::make('id'),
 
-                Forms\Components\Hidden::make('venda_id')
-                    ->default((function ($livewire): int {
-                        return $livewire->ownerRecord->id;
-                    })),
+                        Forms\Components\Hidden::make('venda_id')
+                            ->default((function ($livewire): int {
+                                return $livewire->ownerRecord->id;
+                            })),
 
-                Forms\Components\Select::make('produto_id')
-                    ->relationship(name: 'produto', titleAttribute: 'nome')
-                    ->searchable(['nome', 'codbar'])
-                    ->disableOptionWhen(fn ($context) => $context == 'edit')
-                    ->columnSpan([
-                        'xl' => 2,
-                        '2xl' => 2,
-                    ])
-                    ->live(debounce:200)
-                    ->required()
-                    ->label('Produto')
-                    ->afterStateUpdated(
-                        function ($state, callable $set, Get $get,) {
-                            $produto = Produto::find($state);
+                        Forms\Components\Select::make('produto_id')
+                            ->relationship(name: 'produto', titleAttribute: 'nome')
+                            ->searchable(['nome', 'codbar'])
+                            ->disableOptionWhen(fn($context) => $context == 'edit')
+                            ->columnSpan([
+                                'xl' => 2,
+                                '2xl' => 2,
+                            ])
+                            ->live(debounce: 200)
+                            ->required()
+                            ->label('Produto')
+                            ->afterStateUpdated(
+                                function ($state, callable $set, Get $get,) {
+                                    $produto = Produto::find($state);
 
-                            if ($produto) {
-                                $set('valor_venda', $produto->valor_venda);
-                                $set('valor_custo_atual', $produto->valor_compra);
-                                $set('sub_total', (($get('qtd') * $get('valor_venda')) + (float)$get('acres_desc')));
-                                $set('estoque_atual', $produto->estoque);
-                                $set('total_custo_atual', $get('valor_custo_atual') * $get('qtd'));
-                            }
-                        }
-                    ),
-                Forms\Components\TextInput::make('estoque_atual')
-                    ->label('Estoque Atual')
-                    ->hidden(fn (string $context): bool => $context === 'edit')
-                    ->readOnly(),
+                                    if ($produto) {
+                                        $set('valor_venda', $produto->valor_venda);
+                                        $set('valor_custo_atual', $produto->valor_compra);
+                                        $set('sub_total', (($get('qtd') * $get('valor_venda')) + (float)$get('acres_desc')));
+                                        $set('estoque_atual', $produto->estoque);
+                                        $set('total_custo_atual', $get('valor_custo_atual') * $get('qtd'));
+                                    }
+                                }
+                            ),
+                        Forms\Components\TextInput::make('estoque_atual')
+                            ->label('Estoque Atual')
+                            ->hidden(fn(string $context): bool => $context === 'edit')
+                            ->readOnly(),
 
-                Forms\Components\TextInput::make('qtd')
-                    ->default('1')
-                    ->required()
-                    ->live(debounce: 500)
-                    ->afterStateUpdated(
-                        function ($state, callable $set, Get $get,) {
-                            $set('sub_total', (((float)$get('qtd') * (float)$get('valor_venda')) + (float)$get('acres_desc')));
-                            $set('total_custo_atual', $get('valor_custo_atual') * $get('qtd'));
-                        }
-                    ),
-                Forms\Components\TextInput::make('valor_venda')
-                    ->label('Valor Venda')
-                    ->numeric()
-                    ->required()
-                    ->readOnly(),
-                Forms\Components\TextInput::make('acres_desc')
-                    ->numeric()
-                    ->label('Desconto/Acréscimo')
-                    ->live(debounce: 500)
-                    ->afterStateUpdated(function (Get $get, Set $set, $state) {
-                        $set('sub_total', (((float)$get('qtd') * (float)$get('valor_venda')) + (float)$get('acres_desc')));
-                       // $set('total_custo_atual',((float)$get('total_custo_atual') + (float)$state));
-                    }),
-                Forms\Components\TextInput::make('sub_total')
-                    ->numeric()
-                    ->readOnly()
-                    ->label('SubTotal'),
-                Forms\Components\Hidden::make('valor_custo_atual'),
-                  
-                Forms\Components\Hidden::make('total_custo_atual'),
-                   
+                        Forms\Components\TextInput::make('qtd')
+                            ->default('1')
+                            ->required()
+                            ->live(debounce: 500)
+                            ->afterStateUpdated(
+                                function ($state, callable $set, Get $get,) {
+                                    $set('sub_total', (((float)$get('qtd') * (float)$get('valor_venda')) + (float)$get('acres_desc')));
+                                    $set('total_custo_atual', $get('valor_custo_atual') * $get('qtd'));
+                                }
+                            ),
+                        Forms\Components\TextInput::make('valor_venda')
+                            ->label('Valor Venda')
+                            ->numeric()
+                            ->required()
+                            ->readOnly(),
+                        Forms\Components\TextInput::make('acres_desc')
+                            ->numeric()
+                            ->label('Desconto/Acréscimo')
+                            ->live(debounce: 500)
+                            ->afterStateUpdated(function (Get $get, Set $set, $state) {
+                                $set('sub_total', (((float)$get('qtd') * (float)$get('valor_venda')) + (float)$get('acres_desc')));
+                                // $set('total_custo_atual',((float)$get('total_custo_atual') + (float)$state));
+                            }),
+                        Forms\Components\TextInput::make('sub_total')
+                            ->numeric()
+                            ->readOnly()
+                            ->label('SubTotal'),
+                        Forms\Components\Hidden::make('valor_custo_atual'),
+
+                        Forms\Components\Hidden::make('total_custo_atual'),
+
 
                     ])
 
@@ -126,7 +128,8 @@ class ItensVendaRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->modalHeading('Itens da Venda')
-                    ->label('Adicionar')
+                    ->label('Adicionar Produtos')
+                    ->icon('heroicon-o-plus')
                     ->after(function ($data, $record) {
                         $produto = Produto::find($data['produto_id']);
                         $produto->estoque -= $data['qtd'];
@@ -134,12 +137,47 @@ class ItensVendaRelationManager extends RelationManager
                         $venda->valor_total += $data['sub_total'];
                         $venda->save();
                         $produto->save();
+                    }),
+                Tables\Actions\Action::make('fluxo_caixa')
+                    ->label(('Lançar no Caixa'))
+                    ->icon('heroicon-o-currency-dollar')
+                    ->hidden(fn($livewire) => $livewire->ownerRecord->status_caixa == 1)
+                    ->color('success')
+                    ->action(function ($livewire) {
+                        if ($livewire->ownerRecord->valor_total > 0) {
+                            $addFluxoCaixa = [
+                                'valor' => ($livewire->ownerRecord->valor_total),
+                                'tipo'  => 'CREDITO',
+                                'obs'   => 'Recebido da venda nº: ' . $livewire->ownerRecord->id . '',
+                            ];
+                            $venda = Venda::find($livewire->ownerRecord->id);
+                            $venda->status_caixa = 1;
+                            $venda->save();
+
+
+                            Notification::make()
+                                ->title('Valor de R$' . $livewire->ownerRecord->valor_total . ' lançado no caixa com sucesso!')
+                                ->success()
+                                ->send();
+                            FluxoCaixa::create($addFluxoCaixa);
+                        } 
+                        else {
+                            Notification::make()
+                                ->title('Atenção')
+                                ->body('Valor da venda zerado. Adicione os produtos para depois lançar no caixa.')
+                                ->danger()
+                                ->persistent()
+                                ->send();
+                        }
                     })
+
+                    ->requiresConfirmation()
+                    ->modalIcon('heroicon-o-currency-dollar')
 
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->mutateFormDataUsing(function ($data) {
+                    ->mutateFormDataUsing(function ($data) {
 
                         $produto = Produto::find($data['produto_id']);
                         $idItemCompra = ItensVenda::find($data['id']);
@@ -159,6 +197,7 @@ class ItensVendaRelationManager extends RelationManager
                         $venda->save();
                         $produto->save();
                     }),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

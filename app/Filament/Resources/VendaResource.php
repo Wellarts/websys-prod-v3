@@ -120,5 +120,8 @@ class VendaResource extends Resource
             'create' => Pages\CreateVenda::route('/create'),
             'edit' => Pages\EditVenda::route('/{record}/edit'),
         ];
-    }    
+    } 
+    
+    
+
 }

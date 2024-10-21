@@ -21,6 +21,7 @@ class Venda extends Model
         'valor_total',
         'lucro_venda',
         'obs',
+        'status_caixa'
 
     ];
 
