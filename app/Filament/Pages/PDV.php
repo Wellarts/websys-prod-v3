@@ -108,6 +108,7 @@ class PDV extends  page implements HasForms, HasTable
                         //         }),
                         //  //   TextInput::make('produto_nome')
                         Select::make('produto_id')
+                            ->columnSpan(2)
                             ->label('Produto')
                             ->searchable()
                             ->getSearchResultsUsing(function (string $search) {
