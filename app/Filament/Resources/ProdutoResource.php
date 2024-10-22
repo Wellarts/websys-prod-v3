@@ -100,6 +100,7 @@ class ProdutoResource extends Resource
                                 $set('valor_venda', ((((float)$get('valor_compra') * (float)$get('lucratividade')) / 100) + (float)$get('valor_compra')));
                             }),
                         Forms\Components\TextInput::make('lucratividade')
+                            ->label('Lucratividade (%)')
                             ->default(0)
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Get $get, Set $set) {
