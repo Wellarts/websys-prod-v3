@@ -31,6 +31,8 @@ class VendaPDVResource extends Resource
 
     protected static ?string $title = 'Vendas PDV';
 
+    protected static ?int $navigationSort = 3;
+
 
 
     public static function form(Form $form): Form

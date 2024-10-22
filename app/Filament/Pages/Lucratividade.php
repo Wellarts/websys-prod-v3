@@ -27,6 +27,8 @@ class Lucratividade extends Page implements HasTable
 
     protected static ?string $navigationGroup = 'Consultas';
 
+    protected static ?int $navigationSort = 17;
+
     
 
 

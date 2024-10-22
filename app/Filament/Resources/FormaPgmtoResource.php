@@ -23,6 +23,8 @@ class FormaPgmtoResource extends Resource
 
     protected static ?string $navigationGroup = 'Cadastros';
 
+    protected static ?int $navigationSort = 12;
+
 
     public static function form(Form $form): Form
     {

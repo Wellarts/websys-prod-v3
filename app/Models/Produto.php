@@ -21,7 +21,13 @@ class Produto extends Model
             'valor_venda',
             'total_compra',
             'total_venda',
-            'total_lucratividade'
+            'total_lucratividade',
+            'foto',
+            'tipo',
+    ];
+
+    protected $casts = [
+        'foto' => 'array',
     ];
 
     public function ProdutoFornecedor() 

@@ -32,6 +32,8 @@ class ContasReceberResource extends Resource
 
     protected static ?string $navigationGroup = 'Financeiro';
 
+    protected static ?int $navigationSort = 5;
+
     public static function form(Form $form): Form
     {
         return $form

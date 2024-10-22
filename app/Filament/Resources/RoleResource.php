@@ -26,6 +26,8 @@ class RoleResource extends Resource
 
     protected static ?string $navigationLabel = 'Funções';
 
+    protected static ?int $navigationSort = 14;
+
     public static function form(Form $form): Form
     {
         return $form

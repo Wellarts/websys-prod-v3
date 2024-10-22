@@ -27,6 +27,8 @@ class FornecedorResource extends Resource
 
     protected static ?string $navigationGroup = 'Cadastros';
 
+    protected static ?int $navigationSort = 10;
+
     public static function form(Form $form): Form
     {
         return $form

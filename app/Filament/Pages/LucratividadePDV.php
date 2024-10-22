@@ -28,6 +28,8 @@ class LucratividadePDV extends Page implements HasTable
 
     protected static ?string $title = 'Lucratividade PDV';
 
+    protected static ?int $navigationSort = 18;
+
     public static function shouldRegisterNavigation(): bool
     {
          /** @var \App\Models\User */

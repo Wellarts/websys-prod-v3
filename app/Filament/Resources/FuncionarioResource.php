@@ -26,6 +26,8 @@ class FuncionarioResource extends Resource
 
     protected static ?string $navigationLabel = 'Funcionários';
 
+    protected static ?int $navigationSort = 11;
+
 
     public static function form(Form $form): Form
     {
