@@ -119,17 +119,17 @@ class PDV extends  page implements HasForms, HasTable
                                     ->get()
                                     ->mapWithKeys(function (Produto $product) {
                                         // Exibe código de barras e nome no select
-                                        return [$product->codbar => "[{$product->codbar}] {$product->nome}"];
+                                        return [$product->id => "[{$product->codbar}] {$product->nome}"];
                                     });
                             })
-                            ->getOptionLabelUsing(fn($value): ?string => Produto::where('codbar', $value)->first()?->nome)
+                            ->getOptionLabelUsing(fn($value): ?string => Produto::where('id', $value)->first()?->nome)
                             ->autofocus()
                             ->extraInputAttributes(['tabindex' => 1])
                             ->live(debounce: 900)
                             ->afterStateUpdated(function ($state, Get $get, Set $set) {
                                 //  dd($get('produto_id'));
                                 //  $produto = Produto::where('codbar','=', $state)->first();
-
+                                 // dd($state);
                                 //  $set('produto_nome', $produto->nome);
                                 $this->updated($state, $state);
                             }),
@@ -143,12 +143,13 @@ class PDV extends  page implements HasForms, HasTable
 
     public function updated($name, $value): void
     {
+       // dd($name);
 
         if ($name === 'produto_id') {
 
 
 
-            $produto = Produto::where('codbar', '=', $value)->first();
+            $produto = Produto::where('id', '=', $value)->first();
             //   dd($produto);
             if ($produto != null) {
                 $addProduto = [
@@ -189,6 +190,7 @@ class PDV extends  page implements HasForms, HasTable
 
             TextColumn::make('produto.nome'),
             TextInputColumn::make('qtd')
+                ->alignCenter()
                 ->summarize(Sum::make()->label('Qtd Produtos'))
                 ->updateStateUsing(function (Model $record, $state) {
                     $record->sub_total = ($state * $record->valor_venda);
@@ -199,9 +201,11 @@ class PDV extends  page implements HasForms, HasTable
 
                 ->label('Quantidade'),
             TextColumn::make('valor_venda')
+                ->alignCenter()
                 ->label('Valor Unitário')
                 ->money('BRL'),
             TextInputColumn::make('acres_desc')
+                ->alignCenter()
                 ->label('Acréscimo/Desconto')
                 ->updateStateUsing(function (Model $record, $state) {
                     $record->sub_total = (((float)$record->valor_venda + (float)$state) * $record->qtd);
@@ -210,6 +214,7 @@ class PDV extends  page implements HasForms, HasTable
                 })
                 ->label('Acres/Desc'),
             TextColumn::make('sub_total')
+                ->alignCenter()
                 ->label('Sub-Total')
                 ->money('BRL')
                 ->summarize(Sum::make()->label('TOTAL')->money('BRL')),

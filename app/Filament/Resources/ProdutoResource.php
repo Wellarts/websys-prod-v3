@@ -19,6 +19,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
@@ -152,6 +153,13 @@ class ProdutoResource extends Resource
                     ->label('Lucratividade (%)'),
                 Tables\Columns\TextColumn::make('valor_venda')
                     ->money('BRL'),
+                ImageColumn::make('foto')
+                    ->label('Fotos')
+                    ->alignCenter()
+                    ->circular()
+                    ->stacked()
+                    ->limit(2)
+                    ->limitedRemainingText(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->dateTime(),
