@@ -224,7 +224,9 @@ class PDV extends  page implements HasForms, HasTable
     {
         return [
             CreateAction::make()
-                ->label('Finalizar Venda')
+                ->label('Finalizar (Ctrl+F7)')
+                ->icon('heroicon-o-document-currency-dollar')
+                ->keyBindings('ctrl+f7')
                 ->modalHeading('Finalizar Venda - PDV')
                 ->model(VendaPDV::class)
                 ->createAnother(false)
