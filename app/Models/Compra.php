@@ -18,6 +18,7 @@ class Compra extends Model
             'outros_custos',
             'valor_total',
             'obs',
+            'status_caixa'
         ];
 
         public function fornecedor()

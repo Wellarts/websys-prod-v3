@@ -244,6 +244,8 @@ class ContasReceberRelationManager extends RelationManager
                             $venda->save();
 
                 }
+
+                
             ),
             ])
             ->actions([

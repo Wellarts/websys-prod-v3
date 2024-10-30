@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CompraResource\RelationManagers;
 
+use App\Models\Compra;
 use App\Models\contasPagar;
 use App\Models\FluxoCaixa;
 use Carbon\Carbon;
@@ -189,7 +190,7 @@ class ContasPagarRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()
                     ->label('Lançar Pagamento')
                     ->after(
-                        function ($data, $record) {
+                        function ($data, $record, $livewire) {
                             if ($record->parcelas > 1) {
                                 $valor_parcela = ($record->valor_total / $record->parcelas);
                                 $vencimentos = Carbon::create($record->data_vencimento);
@@ -218,6 +219,10 @@ class ContasPagarRelationManager extends RelationManager
 
                                 FluxoCaixa::create($addFluxoCaixa);
                             }
+
+                            $compra = Compra::find($livewire->ownerRecord->id);
+                            $compra->status_caixa = 1;
+                            $compra->save();
                         }
                     ),
             ])
