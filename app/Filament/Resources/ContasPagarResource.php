@@ -13,6 +13,8 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\Summarizers\Sum;
@@ -193,16 +195,29 @@ class ContasPagarResource extends Resource
                 Tables\Actions\EditAction::make()
                 ->after(function ($data, $record) {
 
-                    if($record->status = 1)
-                    {
-                        $addFluxoCaixa = [
-                            'valor' => ($record->valor_parcela * -1),
-                            'tipo'  => 'DEBITO',
-                            'obs'   => 'Pagamento da compra nº: '.$record->compra_id. '',
-                        ];
-
-                        FluxoCaixa::create($addFluxoCaixa);
+                    if ($record->status = 1 and $record->valor_parcela != $record->valor_pago) {
+                        Notification::make()
+                            ->title('RECEBIMENTO PARCIAL')
+                            ->success()
+                            ->body('Deseja lançar o valor restante de R$ ' . ($record->valor_parcela - $record->valor_pago) . ' como uma nova parcela?')
+                            ->actions([
+                                Action::make('Sim')
+                                    ->button()
+                                     ->url(route('novaParcelaPagar', $record)),
+           
+                            ])
+                            ->persistent()
+                            ->send();
                     }
+
+                    $addFluxoCaixa = [
+                        'valor' => ($record->valor_pago * -1),
+                        'tipo'  => 'DEBITO',
+                        'obs'   => 'Pagamento da Compra nº: '.$record->compra_id. '',
+                    ];
+
+                    FluxoCaixa::create($addFluxoCaixa);
+                   
                 }),
                 Tables\Actions\DeleteAction::make(),
             ])

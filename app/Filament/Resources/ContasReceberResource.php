@@ -200,7 +200,7 @@ class ContasReceberResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->after(function ($data, $record) {
+                    ->after(function ($livewire, $record) {
 
                         if ($record->status = 1 and $record->valor_parcela != $record->valor_recebido) {
                             Notification::make()
@@ -208,39 +208,23 @@ class ContasReceberResource extends Resource
                                 ->success()
                                 ->body('Deseja lançar o valor restante de R$ ' . ($record->valor_parcela - $record->valor_recebido) . ' como uma nova parcela?')
                                 ->actions([
-                                    Action::make('criar')
+                                    Action::make('Sim')
                                         ->button()
-                                        
-                                    //     ->dispatch(function ($livewire) {
-                                    //         dd($livewire);
-                                    //         $addNovaParcela = [
-                                    //             'cliente' => ($record->cliente_id),
-                                    //             'venda_id'  => ($record->venda_id),
-                                    //             'parcelas'   => 1,
-                                    //             'ordem_parcela'  => 1,
-                                    //             'data_vencimento'  => Carbon::now()->addDays(30),
-                                    //             'status'  => 0,
-                                    //             'valor_total'  => ($record->valor_total),
-                                    //             'valor_parcela'  => ($record->valor_parcela - $record->valor_recebido),
-                                    //             'obs' => 'Parcela restante referente ao pagamento parcial da parcela
-                                    //             ' . $record->ordem_parcela . ' da venda ' . $record->venda_id . '',
-                                    //         ];
-                                    //         ContasReceber::create($addNovaParcela);
-                                    //    }),
-                                     ->url(route('novaParcela', $record)),
-                                    
-                                    
-                                    Action::make('undo')
-                                        ->color('gray'),
+                                         ->url(route('novaParcela', $record)),
+               
                                 ])
+                                ->persistent()
                                 ->send();
                         }
-                        // $addFluxoCaixa = [
-                        //     'valor' => ($record->valor_recebido),
-                        //     'tipo'  => 'CREDITO',
-                        //     'obs'   => 'Recebido da venda nº: ' . $record->venda_id . '',
-                        // ];
-                        // FluxoCaixa::create($addFluxoCaixa);
+
+                        $addFluxoCaixa = [
+                            'valor' => ($record->valor_recebido),
+                            'tipo'  => 'CREDITO',
+                            'obs'   => 'Recebido da venda nº: '.$record->venda_id. '',
+                        ];
+
+                        FluxoCaixa::create($addFluxoCaixa);
+                       
                     }),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -258,30 +242,5 @@ class ContasReceberResource extends Resource
         ];
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('create')
-                ->label('Create Post')
-                ->modalId('create-record') // Mesmo ID usado no x-on:click
-                ->modalHeading('Create Post')
-                ->modalSubmitActionLabel('Create')
-                ->form([
-                    // Seus campos do formulário aqui
-                    TextInput::make('title')
-                        ->required(),
-                    TextInput::make('content')
-                        ->required(),
-                ])
-                ->action(function (array $data): void {
-                    // Lógica para criar o registro
-                    ContasReceberResource::create($data);
-
-                    Notification::make()
-                        ->title('Created successfully')
-                        ->success()
-                        ->send();
-                }),
-        ];
-    }
+    
 }
