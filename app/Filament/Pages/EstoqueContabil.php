@@ -48,7 +48,7 @@ class EstoqueContabil extends Page  implements HasForms, HasTable
 
     protected function getTableQuery(): Builder
     {
-        return Produto::query();
+        return Produto::query()->where('tipo', 1);
     }
 
     protected function getTableColumns(): array

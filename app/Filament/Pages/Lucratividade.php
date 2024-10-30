@@ -49,6 +49,7 @@ class Lucratividade extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
+            ->defaultSort('id','desc')
             ->query(Venda::query())
           //  ->defaultGroup('data_venda','year')
             ->columns([

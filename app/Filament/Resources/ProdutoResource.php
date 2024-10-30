@@ -58,12 +58,12 @@ class ProdutoResource extends Resource
                             ->live()
                             ->afterStateUpdated(function (Set $set, $state) {
                                 if ($state == 1) {
-                                   $set('lucratividade', 0);
+                                    $set('lucratividade', 0);
                                 } elseif ($state == 2) {
                                     $set('lucratividade', 100);
                                 }
                             })
-                                
+
                             ->grouped(),
                         Forms\Components\TextInput::make('nome')
                             ->required()
@@ -142,6 +142,23 @@ class ProdutoResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('nome')
                     ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('tipo')
+                    ->sortable()
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        '1' => 'success',
+                        '2' => 'warning',
+                        
+                    })
+                    ->formatStateUsing(function ($state) {
+                        if ($state == 1) {
+                            return 'Produto';
+                        }
+                        if ($state == 2) {
+                            return 'Serviço';
+                        }
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('codbar')
                     ->searchable(),

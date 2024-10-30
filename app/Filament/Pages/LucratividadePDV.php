@@ -59,6 +59,7 @@ class LucratividadePDV extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
+            ->defaultSort('data_venda','desc')
             ->query(VendaPDV::query())
           //  ->defaultGroup('data_venda','year')
             ->columns([
