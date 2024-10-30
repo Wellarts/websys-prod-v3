@@ -123,6 +123,7 @@ class ContasPagarResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('data_vencimento', 'asc')
             ->columns([
                 Tables\Columns\TextColumn::make('fornecedor.nome')
                     ->sortable()
@@ -173,9 +174,11 @@ class ContasPagarResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Filter::make('Aberta')
-                ->query(fn (Builder $query): Builder => $query->where('status', false)),
-                 SelectFilter::make('fornecedor')->relationship('fornecedor', 'nome'),
+                Filter::make('A pagar')
+                ->query(fn (Builder $query): Builder => $query->where('status', false))->default(true),
+                Filter::make('Pagas')
+                ->query(fn (Builder $query): Builder => $query->where('status', true)),
+                 SelectFilter::make('fornecedor')->relationship('fornecedor', 'nome')->searchable(),
                  Tables\Filters\Filter::make('data_vencimento')
                     ->form([
                         Forms\Components\DatePicker::make('vencimento_de')
@@ -189,8 +192,8 @@ class ContasPagarResource extends Resource
                                 fn($query) => $query->whereDate('data_vencimento', '>=', $data['vencimento_de']))
                             ->when($data['vencimento_ate'],
                                 fn($query) => $query->whereDate('data_vencimento', '<=', $data['vencimento_ate']));
-                    })
-            ])
+                            })
+                    ])
             ->actions([
                 Tables\Actions\EditAction::make()
                 ->after(function ($data, $record) {

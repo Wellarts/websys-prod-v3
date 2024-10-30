@@ -123,6 +123,7 @@ class ContasReceberResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+        ->defaultSort('data_vencimento', 'asc')
             ->columns([
                 Tables\Columns\TextColumn::make('cliente.nome')
                     ->sortable()
@@ -176,9 +177,11 @@ class ContasReceberResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Filter::make('Aberta')
-                    ->query(fn(Builder $query): Builder => $query->where('status', false)),
-                SelectFilter::make('cliente')->relationship('cliente', 'nome'),
+                Filter::make('A receber')
+                    ->query(fn(Builder $query): Builder => $query->where('status', false))->default(true),
+                Filter::make('Recebidas')
+                    ->query(fn(Builder $query): Builder => $query->where('status', true)),
+                SelectFilter::make('cliente')->relationship('cliente', 'nome')->searchable(),
                 Tables\Filters\Filter::make('data_vencimento')
                     ->form([
                         Forms\Components\DatePicker::make('vencimento_de')
