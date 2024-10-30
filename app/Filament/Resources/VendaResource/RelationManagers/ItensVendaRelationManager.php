@@ -129,6 +129,7 @@ class ItensVendaRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()
                     ->modalHeading('Itens da Venda')
                     ->label('Adicionar Produtos')
+                    ->hidden(fn($livewire) => $livewire->ownerRecord->status_caixa == 1)
                     ->icon('heroicon-o-plus')
                     ->after(function ($data, $record) {
                         $produto = Produto::find($data['produto_id']);

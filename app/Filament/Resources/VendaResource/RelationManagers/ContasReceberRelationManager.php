@@ -4,6 +4,7 @@ namespace App\Filament\Resources\VendaResource\RelationManagers;
 
 use App\Models\ContasReceber;
 use App\Models\FluxoCaixa;
+use App\Models\Venda;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
@@ -203,7 +204,7 @@ class ContasReceberRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                 ->label('Lançar Recebimento')
-                ->after(function ($data, $record) {
+                ->after(function ($data, $record, $livewire) {
                     if($record->parcelas > 1)
                     {
                         $valor_parcela = ($record->valor_total / $record->parcelas);
@@ -237,6 +238,10 @@ class ContasReceberRelationManager extends RelationManager
 
                         FluxoCaixa::create($addFluxoCaixa);
                     }
+
+                            $venda = Venda::find($livewire->ownerRecord->id);
+                            $venda->status_caixa = 1;
+                            $venda->save();
 
                 }
             ),
