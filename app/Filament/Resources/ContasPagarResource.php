@@ -43,81 +43,132 @@ class ContasPagarResource extends Resource
                 Grid::make('4')
                     ->schema([
                         Forms\Components\Select::make('fornecedor_id')
-                        ->columnSpan([
-                            'xl' => 2,
-                            '2xl' => 2,
-                        ])
-                        ->label('Fornecedor')
-                        ->options(Fornecedor::all()->pluck('nome', 'id')->toArray())
-                        ->required()
-                        ->disabled(),
-                    Forms\Components\TextInput::make('compra_id')
-                        ->hidden()
-                        ->required(),
-                    Forms\Components\TextInput::make('ordem_parcela')
-                        ->label('Parcela Nº')
-                        ->readOnly()
-                        ->maxLength(10),
-                    Forms\Components\TextInput::make('parcelas')
-                        ->required()
-                        ->readOnly()
-                        ->maxLength(255),
+                            ->columnSpan([
+                                'xl' => 2,
+                                '2xl' => 2,
+                            ])
+                            ->label('Fornecedor')
+                            ->options(Fornecedor::all()->pluck('nome', 'id')->toArray())
+                            ->required()
+                            ->disabled(function ($context) {
+                                if ($context == 'create') {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            }),
+                        Forms\Components\TextInput::make('compra_id')
+                            ->hidden()
+                            ->required(),
+                        Forms\Components\TextInput::make('ordem_parcela')
+                            ->label('Parcela Nº')
+                            ->default(1)
+                            ->readOnly()
+                            // ->hidden(function ($context) {
+                            //     if ($context == 'edit') {
+                            //         return false;
+                            //     } else {
+                            //         return true;
+                            //     }
+                            // })
+                            ->maxLength(10),
+                        Forms\Components\TextInput::make('valor_parcela')
+                            ->numeric()
+                            ->label('Valor da Parcela')
+                            ->readOnly(function ($context) {
+                                if ($context == 'create') {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
+                            
+                            ->required(),
+                        Forms\Components\TextInput::make('parcelas')
+                            ->label('Qtd Parcelas')
+                            ->required()
+                            ->live(onBlur:true)
+                            ->readOnly(function ($context) {
+                                if ($context == 'create') {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
+                            ->afterStateUpdated(function($state, Set $set, Get $get){
+                                $set('valor_total', ($get('valor_parcela') * $state));
+                            })
+                            ->maxLength(255),
 
-                    Forms\Components\DatePicker::make('data_vencimento')
-                        ->label('Data do Vencimento')
-                        ->displayFormat('d/m/Y')
-                        ->required(),
-                    Forms\Components\DatePicker::make('data_pagamento')
-                        ->label('Data do Pagamento')
-                        ->displayFormat('d/m/Y'),
-                    Forms\Components\TextInput::make('valor_total')
-                        ->numeric()
-                        ->label('Valor Total')
-                        ->readOnly()
-                        ->required(),
-                    Forms\Components\TextInput::make('valor_parcela')
-                        ->numeric()
-                        ->label('Valor da Parcela')
-                        ->readOnly()
-                        ->required(),
-                    Forms\Components\TextInput::make('valor_pago')
-                        ->numeric()
-                        ->label('Valor Pago'),
-                    Forms\Components\Textarea::make('obs')
-                        ->columnSpan([
-                            'xl' => 3,
-                            '2xl' => 3,
-                        ])
-                        ->label('Observações'),
-                        ]),
-                    Forms\Components\Toggle::make('status')
-                       /* ->columnSpan([
+                        Forms\Components\DatePicker::make('data_vencimento')
+                            ->label('Data do Vencimento')
+                            ->displayFormat('d/m/Y')
+                            ->required(),
+                        Forms\Components\DatePicker::make('data_pagamento')
+                            ->label('Data do Pagamento')
+                            ->hidden(function ($context) {
+                                if ($context == 'edit') {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
+                            ->displayFormat('d/m/Y'),
+
+                        Forms\Components\TextInput::make('valor_total')
+                            ->numeric()
+                            ->label('Valor Total')
+                            ->readOnly(function ($context) {
+                                if ($context == 'create') {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
+                            ->required(),
+
+                        Forms\Components\TextInput::make('valor_pago')
+                            ->numeric()
+                            ->hidden(function ($context) {
+                                if ($context == 'edit') {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
+                            ->label('Valor Pago'),
+                        Forms\Components\Textarea::make('obs')
+                            ->columnSpan([
+                                'xl' => 2,
+                                '2xl' => 2,
+                            ])
+                            ->label('Observações'),
+                    ]),
+                Forms\Components\Toggle::make('status')
+                    /* ->columnSpan([
                             'xl' => 3,
                             '2xl' => 3,
                         ]) */
-                        ->inlineLabel(false)
-                        ->default('true')
-                        ->label('Pago')
-                        ->required()
-                        ->live()
-                        ->afterStateUpdated(function (Get $get, Set $set) {
-                                     if($get('status') == 1)
-                                         {
-                                             $set('valor_pago', $get('valor_parcela'));
-                                             $set('data_pagamento', Carbon::now()->format('Y-m-d'));
+                    ->inlineLabel(false)
+                    ->default(0)
+                    ->label('Pago')
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(
+                        function (Get $get, Set $set) {
+                            if ($get('status') == 1) {
+                                $set('valor_pago', $get('valor_parcela'));
+                                $set('data_pagamento', Carbon::now()->format('Y-m-d'));
+                            } else {
 
-                                         }
-                                     else
-                                         {
-
-                                             $set('valor_pago', 0);
-                                             $set('data_pagamento', null);
-                                         }
-                                     }
-                         ),
+                                $set('valor_pago', 0);
+                                $set('data_pagamento', null);
+                            }
+                        }
+                    ),
 
 
-        ]);
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -175,11 +226,11 @@ class ContasPagarResource extends Resource
             ])
             ->filters([
                 Filter::make('A pagar')
-                ->query(fn (Builder $query): Builder => $query->where('status', false))->default(true),
+                    ->query(fn(Builder $query): Builder => $query->where('status', false))->default(true),
                 Filter::make('Pagas')
-                ->query(fn (Builder $query): Builder => $query->where('status', true)),
-                 SelectFilter::make('fornecedor')->relationship('fornecedor', 'nome')->searchable(),
-                 Tables\Filters\Filter::make('data_vencimento')
+                    ->query(fn(Builder $query): Builder => $query->where('status', true)),
+                SelectFilter::make('fornecedor')->relationship('fornecedor', 'nome')->searchable(),
+                Tables\Filters\Filter::make('data_vencimento')
                     ->form([
                         Forms\Components\DatePicker::make('vencimento_de')
                             ->label('Vencimento de:'),
@@ -188,40 +239,43 @@ class ContasPagarResource extends Resource
                     ])
                     ->query(function ($query, array $data) {
                         return $query
-                            ->when($data['vencimento_de'],
-                                fn($query) => $query->whereDate('data_vencimento', '>=', $data['vencimento_de']))
-                            ->when($data['vencimento_ate'],
-                                fn($query) => $query->whereDate('data_vencimento', '<=', $data['vencimento_ate']));
-                            })
-                    ])
+                            ->when(
+                                $data['vencimento_de'],
+                                fn($query) => $query->whereDate('data_vencimento', '>=', $data['vencimento_de'])
+                            )
+                            ->when(
+                                $data['vencimento_ate'],
+                                fn($query) => $query->whereDate('data_vencimento', '<=', $data['vencimento_ate'])
+                            );
+                    })
+            ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->after(function ($data, $record) {
+                    ->after(function ($data, $record) {
 
-                    if ($record->status = 1 and $record->valor_parcela != $record->valor_pago) {
-                        Notification::make()
-                            ->title('RECEBIMENTO PARCIAL')
-                            ->success()
-                            ->body('Deseja lançar o valor restante de R$ ' . ($record->valor_parcela - $record->valor_pago) . ' como uma nova parcela?')
-                            ->actions([
-                                Action::make('Sim')
-                                    ->button()
-                                     ->url(route('novaParcelaPagar', $record)),
-           
-                            ])
-                            ->persistent()
-                            ->send();
-                    }
+                        if ($record->status = 1 and $record->valor_parcela != $record->valor_pago) {
+                            Notification::make()
+                                ->title('RECEBIMENTO PARCIAL')
+                                ->success()
+                                ->body('Deseja lançar o valor restante de R$ ' . ($record->valor_parcela - $record->valor_pago) . ' como uma nova parcela?')
+                                ->actions([
+                                    Action::make('Sim')
+                                        ->button()
+                                        ->url(route('novaParcelaPagar', $record)),
 
-                    $addFluxoCaixa = [
-                        'valor' => ($record->valor_pago * -1),
-                        'tipo'  => 'DEBITO',
-                        'obs'   => 'Pagamento da Compra nº: '.$record->compra_id. '',
-                    ];
+                                ])
+                                ->persistent()
+                                ->send();
+                        }
 
-                    FluxoCaixa::create($addFluxoCaixa);
-                   
-                }),
+                        $addFluxoCaixa = [
+                            'valor' => ($record->valor_pago * -1),
+                            'tipo'  => 'DEBITO',
+                            'obs'   => 'Pagamento da Compra nº: ' . $record->compra_id . '',
+                        ];
+
+                        FluxoCaixa::create($addFluxoCaixa);
+                    }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

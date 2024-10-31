@@ -55,67 +55,123 @@ class ContasReceberResource extends Resource
                             ->label('Cliente')
                             ->options(Cliente::all()->pluck('nome', 'id')->toArray())
                             ->required()
-                            ->disabled(),
-                        Forms\Components\TextInput::make('ordem_parcela')
-                            ->label('Parcela Nº')
-                            ->readOnly()
-                            ->maxLength(10),
+                            ->disabled(function ($context) {
+                                if ($context == 'create') {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            }),
                         Forms\Components\TextInput::make('venda_id')
                             ->hidden()
                             ->required(),
-                        Forms\Components\TextInput::make('parcelas')
-                            ->required()
+                        Forms\Components\TextInput::make('ordem_parcela')
+                            ->label('Parcela Nº')
+                            ->default(1)
                             ->readOnly()
+                            // ->hidden(function ($context) {
+                            //     if ($context == 'edit') {
+                            //         return false;
+                            //     } else {
+                            //         return true;
+                            //     }
+                            // })
+                            ->maxLength(10),
+                        Forms\Components\TextInput::make('valor_parcela')
+                            ->numeric()
+                            ->label('Valor da Parcela')
+                            ->readOnly(function ($context) {
+                                if ($context == 'create') {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
+                            
+                            ->required(),
+                        Forms\Components\TextInput::make('parcelas')
+                            ->label('Qtd Parcelas')
+                            ->required()
+                            ->live(onBlur:true)
+                            ->readOnly(function ($context) {
+                                if ($context == 'create') {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
+                            ->afterStateUpdated(function($state, Set $set, Get $get){
+                                $set('valor_total', ($get('valor_parcela') * $state));
+                            })
                             ->maxLength(255),
 
                         Forms\Components\DatePicker::make('data_vencimento')
                             ->label('Data do Vencimento')
                             ->displayFormat('d/m/Y')
                             ->required(),
-
-                        Forms\Components\DatePicker::make('data_pagamento')
+                        Forms\Components\DatePicker::make('data_recebimento')
                             ->label('Data do Recebimento')
+                            ->hidden(function ($context) {
+                                if ($context == 'edit') {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
                             ->displayFormat('d/m/Y'),
+
                         Forms\Components\TextInput::make('valor_total')
                             ->numeric()
                             ->label('Valor Total')
-                            ->readOnly()
+                            ->readOnly(function ($context) {
+                                if ($context == 'create') {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
                             ->required(),
-                        Forms\Components\TextInput::make('valor_parcela')
-                            ->numeric()
-                            ->label('Valor da Parcela')
-                            ->readOnly()
-                            ->required(),
+
                         Forms\Components\TextInput::make('valor_recebido')
                             ->numeric()
+                            ->hidden(function ($context) {
+                                if ($context == 'edit') {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
                             ->label('Valor Recebido'),
                         Forms\Components\Textarea::make('obs')
                             ->columnSpan([
-                                'xl' => 3,
-                                '2xl' => 3,
+                                'xl' => 2,
+                                '2xl' => 2,
                             ])
                             ->label('Observações'),
-                        Forms\Components\Toggle::make('status')
-                            ->default('true')
-                            ->label('Recebido')
-                            ->required()
-                            ->live()
-                            ->afterStateUpdated(
-                                function (Get $get, Set $set) {
-                                    if ($get('status') == 1) {
-                                        $set('valor_recebido', $get('valor_parcela'));
-                                        $set('data_pagamento', Carbon::now()->format('Y-m-d'));
-                                    } else {
+                    ]),
+                Forms\Components\Toggle::make('status')
+                    /* ->columnSpan([
+                            'xl' => 3,
+                            '2xl' => 3,
+                        ]) */
+                    ->inlineLabel(false)
+                    ->default(0)
+                    ->label('Recebido')
+                    ->required()
+                    ->live()
+                    ->afterStateUpdated(
+                        function (Get $get, Set $set) {
+                            if ($get('status') == 1) {
+                                $set('valor_recebido', $get('valor_parcela'));
+                                $set('data_recebimento', Carbon::now()->format('Y-m-d'));
+                            } else {
 
-                                        $set('valor_recebido', 0);
-                                        $set('data_pagamento', null);
-                                    }
-                                }
-                            ),
+                                $set('valor_recebido', 0);
+                                $set('data_recebimento', null);
+                            }
+                        }
+                    ),
 
-
-
-                    ])
 
             ]);
     }
