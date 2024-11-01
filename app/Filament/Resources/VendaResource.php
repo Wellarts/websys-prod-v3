@@ -24,7 +24,7 @@ class VendaResource extends Resource
 {
     protected static ?string $model = Venda::class;
 
-   
+
     protected static ?string $navigationIcon = 'heroicon-s-shopping-cart';
 
     protected static ?string $navigationGroup = 'Saídas';
@@ -63,9 +63,12 @@ class VendaResource extends Resource
                         ->default(now())
                         ->required(),
                     Forms\Components\Textarea::make('obs')
-                        ->columnSpan('2')
+                        ->columnSpan([
+                            'xl' => 2,
+                            '2xl' => 2,
+                        ])
                         ->label('Observações'),
-                    ])->columns(2)
+                    ])
             ]);
     }
 
@@ -106,7 +109,7 @@ class VendaResource extends Resource
                 ]),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
@@ -114,7 +117,7 @@ class VendaResource extends Resource
             ContasReceberRelationManager::class,
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -122,8 +125,8 @@ class VendaResource extends Resource
             'create' => Pages\CreateVenda::route('/create'),
             'edit' => Pages\EditVenda::route('/{record}/edit'),
         ];
-    } 
-    
-    
+    }
+
+
 
 }
