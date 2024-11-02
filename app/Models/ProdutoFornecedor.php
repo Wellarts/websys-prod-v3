@@ -12,6 +12,8 @@ class ProdutoFornecedor extends Model
     protected $fillable = [
         'compra_id',
         'produto_id',
+        'qtd',
+        'valor'
     ];
 
     public function produto() {

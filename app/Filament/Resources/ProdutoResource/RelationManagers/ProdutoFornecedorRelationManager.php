@@ -30,24 +30,30 @@ class ProdutoFornecedorRelationManager extends RelationManager
             ->recordTitleAttribute('produto_id')
             ->columns([
                 Tables\Columns\TextColumn::make('compra_id')
-                ->label('Compra'),
+                    ->label('Compra'),
                 Tables\Columns\TextColumn::make('compra.fornecedor.nome'),
                 Tables\Columns\TextColumn::make('compra.data_compra')
-                ->date('d/m/y'),
+                    ->label('Data')
+                    ->date('d/m/y'),
+                Tables\Columns\TextColumn::make('qtd'),
+                Tables\Columns\TextColumn::make('valor')
+                    ->money('BRL')
+
+
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-             //   Tables\Actions\CreateAction::make(),
+                //   Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-             //   Tables\Actions\EditAction::make(),
-              //  Tables\Actions\DeleteAction::make(),
+                //   Tables\Actions\EditAction::make(),
+                //  Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-               Tables\Actions\BulkActionGroup::make([
-              //      Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    //      Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

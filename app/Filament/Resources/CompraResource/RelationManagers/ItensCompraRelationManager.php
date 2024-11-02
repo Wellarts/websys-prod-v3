@@ -154,6 +154,8 @@ class ItensCompraRelationManager extends RelationManager
                         $prodFornecedor = [
                             'compra_id' => $data['compra_id'],
                             'produto_id' => $produto->id,
+                            'qtd' => $data['qtd'],
+                            'valor' => $data['valor_compra'],
 
                         ];
                         ProdutoFornecedor::create($prodFornecedor);
