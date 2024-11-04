@@ -53,7 +53,7 @@ class ClienteResource extends Resource
                                     $input.length > 14 ? '99.999.999/9999-99' : '999.999.999-99'
                                 JS))
                             ->rule('cpf_ou_cnpj'),
-                            
+
                         Forms\Components\TextInput::make('telefone')
                             ->minLength(11)
                             ->maxLength(11)
@@ -86,7 +86,7 @@ class ClienteResource extends Resource
                                 return $estado->cidade->pluck('nome', 'id');
                             })
                             ->reactive(),
-                        
+
                         Forms\Components\TextInput::make('email')
                             ->columnSpan([
                                 'xl' => 2,
@@ -124,15 +124,15 @@ class ClienteResource extends Resource
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])  
+            ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-               
-                
+
+
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -143,8 +143,8 @@ class ClienteResource extends Resource
     {
         return [
             'index' => Pages\ManageClientes::route('/'),
-           
-           
+
+
         ];
     }
 }

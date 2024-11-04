@@ -161,7 +161,8 @@ class ItensVendaRelationManager extends RelationManager
                                 ->success()
                                 ->send();
                             FluxoCaixa::create($addFluxoCaixa);
-                        } 
+                            
+                        }
                         else {
                             Notification::make()
                                 ->title('Atenção')

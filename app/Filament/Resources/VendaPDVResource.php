@@ -76,6 +76,7 @@ class VendaPDVResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('data_venda','desc')
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Venda')
