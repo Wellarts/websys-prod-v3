@@ -161,7 +161,7 @@ class ItensVendaRelationManager extends RelationManager
                                 ->success()
                                 ->send();
                             FluxoCaixa::create($addFluxoCaixa);
-                            
+                            return redirect()->route('filament.admin.resources.vendas.create');
                         }
                         else {
                             Notification::make()

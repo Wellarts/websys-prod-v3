@@ -43,17 +43,20 @@ class VendaResource extends Resource
                 ->schema([
                     Forms\Components\Select::make('cliente_id')
                         ->label('Cliente')
+                        ->default(1)
                         ->native(false)
                         ->searchable()
                         ->options(Cliente::all()->pluck('nome', 'id')->toArray())
                         ->required(),
                     Forms\Components\Select::make('funcionario_id')
+                        ->default(1)
                         ->label('Funcionário')
                         ->native(false)
                         ->searchable()
                         ->options(Funcionario::all()->pluck('nome', 'id')->toArray())
                         ->required(),
                     Forms\Components\Select::make('forma_pgmto_id')
+                        ->default(1)
                         ->label('Forma de Pagamento')
                         ->native(false)
                         ->searchable()

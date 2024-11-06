@@ -259,6 +259,7 @@ class ContasReceberResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
+                    ->hidden(fn ($record) => $record->status == 1)
                     ->after(function ($livewire, $record) {
 
                         if ($record->status = 1 and $record->valor_parcela != $record->valor_recebido) {
@@ -285,7 +286,8 @@ class ContasReceberResource extends Resource
                         FluxoCaixa::create($addFluxoCaixa);
                        
                     }),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->hidden(fn ($record) => $record->status == 1),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
