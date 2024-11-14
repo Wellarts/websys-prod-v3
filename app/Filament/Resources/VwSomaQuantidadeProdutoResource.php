@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -115,7 +116,10 @@ class VwSomaQuantidadeProdutoResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                Filter::make('Produto')
+                    ->query(fn(Builder $query): Builder => $query->where('tipo', 1)),
+                Filter::make('Serviço')
+                    ->query(fn(Builder $query): Builder => $query->where('tipo', 2)),
             ])
             ->actions([
                 // Tables\Actions\EditAction::make(),
