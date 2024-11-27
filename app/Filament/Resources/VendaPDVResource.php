@@ -67,9 +67,15 @@ class VendaPDVResource extends Resource
                         ->default(now())
                         ->required(),
                     Forms\Components\Textarea::make('obs')
-                        ->columnSpan('2')
+                        ->columnSpan([
+                            'xl' => 2,
+                            '2xl' => 2,
+                        ])
                         ->label('Observações'),
-                    ])->columns(2)
+                    ])->columns([
+                        'xl' => 2,
+                        '2xl' => 2,
+                    ])
             ]);
     }
 

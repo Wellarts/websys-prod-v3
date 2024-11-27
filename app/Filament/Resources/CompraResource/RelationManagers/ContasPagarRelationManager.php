@@ -119,7 +119,7 @@ class ContasPagarRelationManager extends RelationManager
                             ->label('Pago')
                             ->required()
                             ->reactive()
-                          //  ->hidden(fn (Get $get): bool => $get('parcelas') != '1')
+                            //  ->hidden(fn (Get $get): bool => $get('parcelas') != '1')
                             ->afterStateUpdated(
                                 function (Get $get, Set $set) {
                                     if ($get('status') == 1) {
@@ -228,6 +228,7 @@ class ContasPagarRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
+                    ->hidden(fn($record) => $record->status == 1)
                     ->after(function ($data, $record) {
 
                         if ($record->status = 1) {
@@ -241,6 +242,7 @@ class ContasPagarRelationManager extends RelationManager
                         }
                     }),
                 Tables\Actions\DeleteAction::make()
+                    ->hidden(fn($record) => $record->status == 1),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

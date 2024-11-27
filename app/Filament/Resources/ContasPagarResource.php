@@ -251,6 +251,7 @@ class ContasPagarResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
+                    ->hidden(fn ($record) => $record->status == 1)
                     ->after(function ($data, $record) {
 
                         if ($record->status = 1 and $record->valor_parcela != $record->valor_pago) {
@@ -276,7 +277,8 @@ class ContasPagarResource extends Resource
 
                         FluxoCaixa::create($addFluxoCaixa);
                     }),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->hidden(fn ($record) => $record->status == 1),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -65,17 +65,17 @@ class PDV extends  page implements HasForms, HasTable
     public $pdv;
     public $venda;
 
-    public static function shouldRegisterNavigation(): bool
-    {
-        /** @var \App\Models\User */
-        $authUser =  auth()->user();
+    // public static function shouldRegisterNavigation(): bool
+    // {
+    //     /** @var \App\Models\User */
+    //     $authUser =  auth()->user();
 
-        if ($authUser->hasRole('TI')) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+    //     if ($authUser->hasRole('TI')) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
 
     public function mount(): void

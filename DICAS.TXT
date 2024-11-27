@@ -1,0 +1,33 @@
+CREATE VIEW vw_soma_quantidade_produtos AS
+SELECT 
+    p.id,
+    p.nome,
+    p.tipo,
+    COALESCE(SUM(iv.qtd), 0) + COALESCE(SUM(pdvs.qtd), 0) AS total_vendido_qtd,
+    COALESCE(SUM(iv.sub_total), 0) + COALESCE(SUM(pdvs.sub_total), 0) AS total_vendido_valor,
+    COALESCE(SUM(iv.valor_custo_atual), 0) + COALESCE(SUM(pdvs.total_custo_atual), 0) AS total_vendido_custo,
+    COALESCE(
+        (
+            COALESCE(SUM(iv.sub_total), 0) + COALESCE(SUM(pdvs.sub_total), 0)
+        ) - (
+            COALESCE(SUM(iv.valor_custo_atual), 0) + COALESCE(SUM(pdvs.total_custo_atual), 0)
+        ),
+        0
+    ) AS total_vendido_lucro,
+    (COALESCE(SUM(iv.qtd), 0) + COALESCE(SUM(pdvs.qtd), 0)) * 
+    COALESCE(
+        (
+            COALESCE(SUM(iv.sub_total), 0) + COALESCE(SUM(pdvs.sub_total), 0)
+        ) - (
+            COALESCE(SUM(iv.valor_custo_atual), 0) + COALESCE(SUM(pdvs.total_custo_atual), 0)
+        ),
+        0
+    ) AS rentabilidade
+FROM 
+    produtos p
+LEFT JOIN 
+    itens_vendas iv ON p.id = iv.produto_id
+LEFT JOIN 
+    p_d_v_s pdvs ON p.id = pdvs.produto_id
+GROUP BY 
+    p.id, p.nome;
