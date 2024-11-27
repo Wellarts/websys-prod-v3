@@ -208,7 +208,7 @@ class PDV extends  page implements HasForms, HasTable
                 ->alignCenter()
                 ->label('Acres/Desc')
                 ->updateStateUsing(function (Model $record, $state) {
-                    $record->sub_total = (((float)$record->sub_total + (float)$state));
+                    $record->sub_total = ((((float)$record->qtd * $record->valor_venda) + (float)$state));
                     $record->acres_desc = $state;
                     $record->save();
                 })
