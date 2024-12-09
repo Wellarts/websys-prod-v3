@@ -30,4 +30,4 @@ LEFT JOIN
 LEFT JOIN 
     p_d_v_s pdvs ON p.id = pdvs.produto_id
 GROUP BY 
-    p.id, p.nome;
+    p.id, p.nome. p.tipo;
