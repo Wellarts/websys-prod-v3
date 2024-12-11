@@ -4,7 +4,7 @@ return [
     'name' => 'Wsys Vendas',
     'manifest' => [
         'name' => env('APP_NAME', 'Wsys Vendas'),
-        'short_name' => 'PWA',
+        'short_name' => 'Wsys Vendas',
         'start_url' => '/',
         'background_color' => '#050505',
         'theme_color' => '#ffca38',
