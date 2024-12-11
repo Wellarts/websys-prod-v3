@@ -106,7 +106,7 @@ class ClienteResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('endereco')
-                    ->label('Endereço'),
+                    ->label('Endereçooooo'),
                 Tables\Columns\TextColumn::make('estado.nome')
                     ->label('Estado'),
                 Tables\Columns\TextColumn::make('cidade.nome')
