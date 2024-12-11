@@ -16,9 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::get('/', function () { return redirect('/admin'); })->name('login');
 
 Route::get('pdf/{id}',[ComprovantesController::class, 'geraPdf'])->name('comprovanteNormal');
 Route::get('pdfPdv/{id}',[ComprovantesController::class, 'geraPdfPDV'])->name('comprovantePDV');
