@@ -3,8 +3,8 @@
 return [
     'name' => 'LaravelPWA',
     'manifest' => [
-        'name' => env('APP_NAME', 'My PWA App'),
-        'short_name' => 'PWA',
+        'name' => env('APP_NAME', 'Wsys Vendas'),
+        'short_name' => 'Wsys Vendas',
         'start_url' => '/',
         'background_color' => '#050505',
         'theme_color' => '#ffca38',
