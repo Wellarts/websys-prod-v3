@@ -81,10 +81,12 @@ class FluxoCaixaResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('d/m/Y H:i:s')
+                    ->label('Criado')
                     ->sortable(),
                   //  ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime('d/m/Y H:i:s')
+                    ->label('Atualizado')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
