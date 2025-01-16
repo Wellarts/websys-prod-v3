@@ -111,7 +111,7 @@ class ContasReceberResource extends Resource
                             ->label('Data do Vencimento')
                             ->displayFormat('d/m/Y')
                             ->required(),
-                        Forms\Components\DatePicker::make('data_recebimento')
+                        Forms\Components\DatePicker::make('data_pagamento')
                             ->label('Data do Recebimento')
                             ->hidden(function ($context) {
                                 if ($context == 'edit') {
@@ -218,7 +218,7 @@ class ContasReceberResource extends Resource
                     ->date('d/m/Y')
                     ->alignCenter()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('data_recebimento')
+                Tables\Columns\TextColumn::make('data_pagamento')
                     ->label('Data Recebimento')
                     ->date()
                     ->alignCenter()
