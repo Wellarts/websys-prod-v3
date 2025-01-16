@@ -32,18 +32,18 @@ class Dashboard extends \Filament\Pages\Dashboard
 
 
       public function mount() {
-        // Notification::make()
-        //     ->title('ATENÇÃO')
-        //     ->persistent()
-        //     ->danger()
-        //     ->body('Sua mensalidade está atrasada, regularize sua assinatura para evitar o bloqueio do sistema.
-        //     PIX: 28708223831')
-        //     ->actions([
-        //         Action::make('Entendi')
-        //             ->button()
-        //             ->close(),
-        //         ])
-        //     ->send();
+        Notification::make()
+            ->title('ATENÇÃO')
+            ->persistent()
+            ->danger()
+            ->body('Sua mensalidade está atrasada, regularize sua assinatura para evitar o bloqueio do sistema.
+            PIX: 28708223831')
+            ->actions([
+                Action::make('Entendi')
+                    ->button()
+                    ->close(),
+                ])
+            ->send();
 
         PDV::whereNotIn('venda_p_d_v_id', VendaPDV::pluck('id'))->delete();
     } 
