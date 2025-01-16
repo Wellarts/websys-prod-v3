@@ -165,11 +165,11 @@ class ContasReceberResource extends Resource
                         function (Get $get, Set $set) {
                             if ($get('status') == 1) {
                                 $set('valor_recebido', $get('valor_parcela'));
-                                $set('data_recebimento', Carbon::now()->format('Y-m-d'));
+                                $set('data_pagamento', Carbon::now()->format('Y-m-d'));
                             } else {
 
                                 $set('valor_recebido', 0);
-                                $set('data_recebimento', null);
+                                $set('data_pagamento', null);
                             }
                         }
                     ),
