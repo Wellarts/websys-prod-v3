@@ -51,8 +51,8 @@ class AdminPanelProvider extends PanelProvider
                 ReceberHojeStatsOverview::class,
                 VendasMesChart::class,
                 VendasPDVMesChart::class,
-               // ComprasMesChart::class,
-                RanckingProdutos::class,
+                ComprasMesChart::class,
+               // RanckingProdutos::class,
                 
 
             ])
