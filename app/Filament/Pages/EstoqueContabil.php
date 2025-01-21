@@ -54,7 +54,7 @@ class EstoqueContabil extends Page  implements HasForms, HasTable
     protected function getTableColumns(): array
     {
         return [
-                TextColumn::make('nome')
+                TextColumns::make('nome')
                     ->label('Produto')
                     ->sortable()
                     ->searchable(),
