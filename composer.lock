@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3d1ad078dadddc027fdda21eafda0695",
+    "content-hash": "2e68045b1a1055143b99ea62c801b897",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2362,6 +2362,79 @@
                 }
             ],
             "time": "2023-12-03T19:50:20+00:00"
+        },
+        {
+            "name": "hugomyb/filament-error-mailer",
+            "version": "v3.2.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hugomyb/filament-error-mailer.git",
+                "reference": "92dbcdf84e6bb83437703f4d6f6cec0723c20ec5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hugomyb/filament-error-mailer/zipball/92dbcdf84e6bb83437703f4d6f6cec0723c20ec5",
+                "reference": "92dbcdf84e6bb83437703f4d6f6cec0723c20ec5",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "nunomaduro/collision": "^7.9",
+                "orchestra/testbench": "^8.0",
+                "pestphp/pest": "^2.1",
+                "pestphp/pest-plugin-arch": "^2.0",
+                "pestphp/pest-plugin-laravel": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "FilamentErrorMailer": "Hugomyb\\FilamentErrorMailer\\Facades\\FilamentErrorMailer"
+                    },
+                    "providers": [
+                        "Hugomyb\\FilamentErrorMailer\\FilamentErrorMailerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hugomyb\\FilamentErrorMailer\\": "src/",
+                    "Hugomyb\\FilamentErrorMailer\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mayonobe Hugo",
+                    "email": "hugomayonobe@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Filament plugin for instant e-mail alerts on web errors, simplifying monitoring and application stability.",
+            "homepage": "https://github.com/hugomyb/filament-error-mailer",
+            "keywords": [
+                "filament-error-mailer",
+                "hugomyb",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/hugomyb/filament-error-mailer/issues",
+                "source": "https://github.com/hugomyb/filament-error-mailer"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/hugomyb",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-01-08T11:17:08+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
@@ -5926,16 +5999,16 @@
         },
         {
             "name": "spatie/laravel-package-tools",
-            "version": "1.18.0",
+            "version": "1.18.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-package-tools.git",
-                "reference": "8332205b90d17164913244f4a8e13ab7e6761d29"
+                "reference": "d41c44a7eab604c3eb0cad93210612d4c1429c20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-package-tools/zipball/8332205b90d17164913244f4a8e13ab7e6761d29",
-                "reference": "8332205b90d17164913244f4a8e13ab7e6761d29",
+                "url": "https://api.github.com/repos/spatie/laravel-package-tools/zipball/d41c44a7eab604c3eb0cad93210612d4c1429c20",
+                "reference": "d41c44a7eab604c3eb0cad93210612d4c1429c20",
                 "shasum": ""
             },
             "require": {
@@ -5974,7 +6047,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-package-tools/issues",
-                "source": "https://github.com/spatie/laravel-package-tools/tree/1.18.0"
+                "source": "https://github.com/spatie/laravel-package-tools/tree/1.18.2"
             },
             "funding": [
                 {
@@ -5982,7 +6055,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-12-30T13:13:39+00:00"
+            "time": "2025-01-20T14:14:17+00:00"
         },
         {
             "name": "spatie/laravel-permission",
@@ -11154,12 +11227,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.1"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }
