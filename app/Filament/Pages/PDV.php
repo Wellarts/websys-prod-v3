@@ -329,7 +329,7 @@ class PDV extends  page implements HasForms, HasTable
                                     $valorTotal = PDVs::where('venda_p_d_v_id', $this->venda)->sum('sub_total');
                                     return $valorTotal;
                                 }),
-                            TextInput::make('valor_pago')
+                            TextInputs::make('valor_pago')
                                 ->numeric()
                                 ->label('Valor Pago')
                                 ->autofocus()
