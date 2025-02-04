@@ -79,6 +79,8 @@ class ProdutoResource extends Resource
                             })
                             ->required(false),
                         Forms\Components\TextInput::make('estoque')
+                            ->numeric()
+                            ->integer()
                             ->hidden(function (Get $get) {
                                 if ($get('tipo') == 1) {
                                     return false;
