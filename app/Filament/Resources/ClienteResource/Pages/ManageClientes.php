@@ -14,7 +14,7 @@ class ManageClientes extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label('Novo')
+                ->label('Novo'),
         ];
     }
 }

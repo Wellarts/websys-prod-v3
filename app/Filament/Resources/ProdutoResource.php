@@ -151,7 +151,6 @@ class ProdutoResource extends Resource
                     ->color(fn(string $state): string => match ($state) {
                         '1' => 'success',
                         '2' => 'warning',
-                        
                     })
                     ->formatStateUsing(function ($state) {
                         if ($state == 1) {
