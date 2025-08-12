@@ -24,19 +24,19 @@ use App\Policies\ContasReceberPolicy;
 use App\Policies\FluxoCaixaPolicy;
 use App\Policies\FornecedorPolicy;
 use App\Policies\FuncionarioPolicy;
-use App\Policies\PDVPolicy;
 use App\Policies\PermissionPolicy;
 use App\Policies\PgmtoPolicy;
-use App\Policies\ProdutoPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
 use App\Policies\VendaPolicy;
-use App\Policies\VendasPDVPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-//use App\Policies\ActivityPolicy;
-//use Spatie\Activitylog\Models\Activity;
+use App\Policies\ActivityPolicy;
+use App\Policies\PDVPolicy;
+use App\Policies\ProdutoPolicy;
+use App\Policies\VendasPDVPolicy;
+use Spatie\Activitylog\Models\Activity;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -59,9 +59,9 @@ class AuthServiceProvider extends ServiceProvider
         Role::class => RolePolicy::class,
         User::class => UserPolicy::class,
         Venda::class => VendaPolicy::class,
+        Activity::class => ActivityPolicy::class,
         PDV::class => PDVPolicy::class,
         VendaPDV::class => VendasPDVPolicy::class,
-        //Activity::class => ActivityPolicy::class,
     ];
 
     /**

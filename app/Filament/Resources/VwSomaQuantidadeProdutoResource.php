@@ -23,9 +23,7 @@ class VwSomaQuantidadeProdutoResource extends Resource
 
     protected static ?string $navigationLabel = 'Rentabilidade';
 
-    protected static ?string $navigationGroup = 'Consultas';
-
-    
+    protected static ?string $navigationGroup = 'Consultas';    
 
     protected static ?int $navigationSort = 19;
 

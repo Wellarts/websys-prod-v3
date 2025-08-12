@@ -10,7 +10,6 @@ use Filament\Widgets\TableWidget as BaseWidget;
 class RanckingProdutos extends BaseWidget
 {
 
-    protected int | string | array $columnSpan = 'full';
     
 
     public function table(Table $table): Table
@@ -19,7 +18,6 @@ class RanckingProdutos extends BaseWidget
             ->query(
                 VwSomaQuantidadeProduto::query()
             )
-
             ->columns([
                 Tables\Columns\TextColumn::make('nome')
                     ->sortable()
@@ -33,7 +31,10 @@ class RanckingProdutos extends BaseWidget
                     ->sortable()
                     ->searchable()
                     ->label('Valor Vendido'),
-                
+                Tables\Columns\TextColumn::make('total_vendido_custo')
+                    ->sortable()
+                    ->searchable()
+                    ->label('Valor Custo'),
             ]);
     }
 }

@@ -2,20 +2,21 @@
 
 namespace App\Providers\Filament;
 
+
 use App\Livewire\ComprasMesChart;
 use App\Livewire\PagarHojeStatsOverview;
-use App\Livewire\RanckingProdutos;
 use App\Livewire\ReceberHojeStatsOverview;
 use App\Livewire\VendasMesChart;
 use App\Livewire\VendasPDVMesChart;
+use App\Livewire\TotalVendasPorCliente;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Blade;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\View\PanelsRenderHook;
 use Filament\Widgets;
 use Hugomyb\FilamentErrorMailer\FilamentErrorMailerPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -24,7 +25,6 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -35,10 +35,14 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->favicon(asset('img/logo.png'))
+            ->brandLogo(asset('img/logo.png'))
+            ->brandLogoHeight('3rem')
             ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])
+            
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -53,8 +57,9 @@ class AdminPanelProvider extends PanelProvider
                 VendasMesChart::class,
                 VendasPDVMesChart::class,
                 ComprasMesChart::class,
+                TotalVendasPorCliente::class,
+
                // RanckingProdutos::class,
-                
 
             ])
             ->middleware([
@@ -77,13 +82,12 @@ class AdminPanelProvider extends PanelProvider
                       return Blade::render('@laravelPWA');
                    }
               )
-            ->plugins([
-                FilamentErrorMailerPlugin::make()
-            ])
             ->resources([
                 config('filament-logger.activity_resource')
-            
-            
+
+            ])
+            ->plugins([
+                FilamentErrorMailerPlugin::make()
             ]);
     }
 }
